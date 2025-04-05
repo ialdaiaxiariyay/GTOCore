@@ -79,6 +79,10 @@ public class CrossRecipeMultiblockMachine extends ElectricMultiblockMachine impl
     @Getter
     private final Set<GTRecipe> lastRecipes = new ObjectOpenHashSet<>();
 
+    private GTRecipe lastMatchRecipe;
+
+    private int lastParallel;
+
     @Persisted
     private boolean hasItem;
     @Persisted
@@ -147,7 +151,7 @@ public class CrossRecipeMultiblockMachine extends ElectricMultiblockMachine impl
         }
         long maxEUt = getOverclockVoltage();
         double d = (double) totalEu / maxEUt;
-        int limit = Math.max(5, gTOCore$getOCLimit());
+        int limit = gTOCore$getOCLimit();
         return GTORecipeBuilder.ofRaw().EUt(d >= limit ? maxEUt : (long) (maxEUt * d / limit)).duration((int) Math.max(d, limit)).buildRawRecipe();
     }
 
@@ -158,12 +162,23 @@ public class CrossRecipeMultiblockMachine extends ElectricMultiblockMachine impl
                 if (recipe != null) return recipe;
             }
         } else {
+            GTRecipe match;
+            if (lastMatchRecipe != null) {
+                match = checkRecipe(lastMatchRecipe);
+                if (match == null) {
+                    lastMatchRecipe = null;
+                } else {
+                    return match;
+                }
+            }
             Iterator<GTRecipe> iterator = ((GTORecipeType) getRecipeType()).searchRecipe(this, false);
             if (iterator != null) {
                 while (iterator.hasNext()) {
-                    GTRecipe recipe = checkRecipe(iterator.next());
-                    if (recipe != null) {
-                        return recipe;
+                    GTRecipe recipe = iterator.next();
+                    match = checkRecipe(recipe);
+                    if (match != null) {
+                        if (lastParallel == getRealParallel()) lastMatchRecipe = recipe;
+                        return match;
                     }
                 }
             }
@@ -192,6 +207,7 @@ public class CrossRecipeMultiblockMachine extends ElectricMultiblockMachine impl
             if (recipe != null && (recipe.parallels > 1 || RecipeRunner.matchRecipeInput(this, recipe)) && RecipeRunner.handleRecipeInput(this, recipe)) {
                 recipe.ocLevel = getTier() - rt;
                 recipe.inputs.clear();
+                lastParallel = recipe.parallels;
                 return recipe;
             }
         }
@@ -221,7 +237,7 @@ public class CrossRecipeMultiblockMachine extends ElectricMultiblockMachine impl
 
     @Override
     public GTRecipe getRealRecipe(@NotNull GTRecipe recipe) {
-        return GTORecipeModifiers.accurateParallel(this, recipe, isHatchParallel ? getMaxParallel() : getParallel());
+        return GTORecipeModifiers.accurateParallel(this, recipe, getRealParallel());
     }
 
     @Override
@@ -309,6 +325,10 @@ public class CrossRecipeMultiblockMachine extends ElectricMultiblockMachine impl
     @Override
     public void setParallel(int number) {
         customParallelTrait.setParallel(number);
+    }
+
+    private int getRealParallel() {
+        return isHatchParallel ? getMaxParallel() : getParallel();
     }
 
     public static class CrossRecipeLogic extends CustomRecipeLogic {
