@@ -1,8 +1,8 @@
 package com.gto.gtocore.common.data;
 
 import com.gto.gtocore.api.capability.recipe.ManaRecipeCapability;
+import com.gto.gtocore.api.machine.feature.IOverclockConfigMachine;
 import com.gto.gtocore.api.machine.feature.multiblock.ICoilMachine;
-import com.gto.gtocore.api.machine.feature.multiblock.IOverclockConfigMachine;
 import com.gto.gtocore.api.machine.trait.IEnhancedRecipeLogic;
 import com.gto.gtocore.api.recipe.IGTRecipe;
 import com.gto.gtocore.api.recipe.RecipeRunner;
@@ -186,15 +186,17 @@ public interface GTORecipeModifiers {
     }
 
     static GTRecipe accurateParallel(MetaMachine machine, GTRecipe recipe, int maxParallel) {
-        if (maxParallel > 1 && machine instanceof IRecipeLogicMachine holder) {
-            if (holder.getRecipeLogic() instanceof IEnhancedRecipeLogic logic && logic.gtocore$getlastParallel() == maxParallel) {
+        if (maxParallel > 1 && machine instanceof IRecipeLogicMachine holder && holder.getRecipeLogic() instanceof IEnhancedRecipeLogic logic) {
+            if (logic.gtocore$getlastParallel() == maxParallel) {
                 GTRecipe copied = recipe.copy(ContentModifier.multiplier(maxParallel), false);
                 if (RecipeRunner.matchRecipe(holder, copied)) {
                     copied.parallels = maxParallel;
                     return copied;
                 }
             }
-            return matchParallel(holder, recipe, ParallelLogic.getParallelAmount(machine, recipe, maxParallel));
+            maxParallel = ParallelLogic.getParallelAmount(machine, recipe, maxParallel);
+            logic.gtocore$cleanParallelMap();
+            return matchParallel(holder, recipe, maxParallel);
         }
         return recipe;
     }

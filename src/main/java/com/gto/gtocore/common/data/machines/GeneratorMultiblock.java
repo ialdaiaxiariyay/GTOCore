@@ -577,7 +577,6 @@ public interface GeneratorMultiblock {
             .allRotation()
             .recipe(GTRecipeTypes.DUMMY_RECIPES)
             .generator()
-            .tooltipsText("Strong operational environment will double the power of small generators inside the machine.", "强大的运行环境会让机器中的小发电机功率x2")
             .tooltipsText("Can enable wireless network mode, the generated electrical energy will be directly sent to the wireless network, %s", "可以开启无线电网模式，产生的电能会直接送入无线电网，%s", Component.translatable("gtocore.machine.energy_loss", "5%"))
             .tooltipsKey("gtceu.machine.available_recipe_map_6.tooltip",
                     Component.translatable("gtceu.steam_turbine"),
@@ -597,9 +596,8 @@ public interface GeneratorMultiblock {
                     .where('S', controller(blocks(definition.getBlock())))
                     .where('X', blocks(GTBlocks.CASING_STEEL_SOLID.get())
                             .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1))
-                            .or(abilities(OUTPUT_ENERGY).setExactLimit(1))
-                            .or(abilities(MAINTENANCE).setExactLimit(1))
-                            .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(1)))
+                            .or(abilities(OUTPUT_ENERGY).setMaxGlobalLimited(1))
+                            .or(abilities(MAINTENANCE).setExactLimit(1)))
                     .where('C', blocks(GTBlocks.CASING_TEMPERED_GLASS.get()))
                     .where('#', air())
                     .build())

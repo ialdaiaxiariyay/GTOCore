@@ -1,4 +1,4 @@
-package com.gto.gtocore.common.machine.mana;
+package com.gto.gtocore.common.machine.mana.multiblock;
 
 import com.gto.gtocore.api.gui.OverclockConfigurator;
 import com.gto.gtocore.api.machine.feature.IOverclockConfigMachine;
@@ -15,14 +15,13 @@ import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
-import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SimpleWorkManaMachine extends SimpleManaMachine implements IManaEnergyMachine, IOverclockConfigMachine {
+public class ManaEnergyMultiblockMachine extends ManaMultiblockMachine implements IManaEnergyMachine, IOverclockConfigMachine {
 
     private static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            SimpleWorkManaMachine.class, SimpleManaMachine.MANAGED_FIELD_HOLDER);
+            ManaEnergyMultiblockMachine.class, ManaMultiblockMachine.MANAGED_FIELD_HOLDER);
 
     @Override
     public @NotNull ManagedFieldHolder getFieldHolder() {
@@ -32,20 +31,25 @@ public class SimpleWorkManaMachine extends SimpleManaMachine implements IManaEne
     @Persisted
     private int ocLimit = 20;
 
-    public SimpleWorkManaMachine(IMachineBlockEntity holder, int tier, Int2IntFunction tankScalingFunction, Object... args) {
-        super(holder, tier, tankScalingFunction, args);
-        addHandlerList(RecipeHandlerList.of(IO.IN, new ManaEnergyRecipeHandler(getTierMana(), getManaContainer())));
+    public ManaEnergyMultiblockMachine(IMachineBlockEntity holder) {
+        super(holder);
+    }
+
+    @Override
+    public void onStructureFormed() {
+        super.onStructureFormed();
+        addHandlerList(RecipeHandlerList.of(IO.IN, new ManaEnergyRecipeHandler(Integer.MAX_VALUE, getManaContainer())));
     }
 
     @Nullable
-    @Override
-    public GTRecipe doModifyRecipe(@NotNull GTRecipe recipe) {
+    protected GTRecipe getRealRecipe(@NotNull GTRecipe recipe) {
+        recipe = super.getRealRecipe(recipe);
         long eu = RecipeHelper.getInputEUt(recipe);
         if (eu > 0) {
-            recipe = GTORecipeModifiers.externalEnergyOverclocking(this, recipe, eu, getTierMana(), true, 1, 1);
+            recipe = GTORecipeModifiers.externalEnergyOverclocking(this, recipe, eu, getManaContainer().getMaxConsumption(), true, 1, 1);
             return recipe;
         } else {
-            return GTORecipeModifiers.manaOverclocking(this, recipe, getTierMana(), true, 1, 1);
+            return GTORecipeModifiers.manaOverclocking(this, recipe, getManaContainer().getMaxConsumption(), true, 1, 1);
         }
     }
 
@@ -58,8 +62,8 @@ public class SimpleWorkManaMachine extends SimpleManaMachine implements IManaEne
     @Override
     public void gTOCore$setOCLimit(int number) {
         if (number != ocLimit) {
-            if (getRecipeLogic().getLastRecipe() != null && getRecipeLogic() instanceof IEnhancedRecipeLogic recipeLogic) {
-                recipeLogic.gtocore$setModifyRecipe();
+            if (getRecipeLogic().getLastRecipe() != null && getRecipeLogic() instanceof IEnhancedRecipeLogic enhancedRecipeLogic) {
+                enhancedRecipeLogic.gtocore$setModifyRecipe();
             }
             ocLimit = number;
         }
