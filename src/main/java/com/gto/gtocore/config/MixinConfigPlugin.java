@@ -1,5 +1,7 @@
 package com.gto.gtocore.config;
 
+import com.gto.gtocore.GTOCore;
+
 import com.gregtechceu.gtceu.GTCEu;
 
 import com.lowdragmc.lowdraglib.core.mixins.MixinPluginShared;
@@ -98,16 +100,9 @@ public final class MixinConfigPlugin implements IMixinConfigPlugin {
                     }
                 }
                 if (MIXINS_ON_CLASS_INFO != null) {
-                    try {
-                        for (IMixinInfo iMixinInfo : (Set<IMixinInfo>) MIXINS_ON_CLASS_INFO.invokeExact(classInfo)) {
-                            if (iMixinInfo.getConfig().getMixinPackage().equals("com.gto.gtocore.mixin.")) continue;
-                            throw new RuntimeException();
-                        }
-                    } catch (Throwable e) {
-                        throw new RuntimeException("Mixin usage in this location is prohibited due to potential severe consequences.");
-                    }
+                    GTOCore.LOGGER.info("恭喜 MIXINS_ON_CLASS_INFO != null");
                 }
-            } else if (name.startsWith("com.gto.gtocore")) throw new RuntimeException("Do not use mixins on core - submit a pull request instead if modifications are needed.");
+            }
         }
 
         @Override

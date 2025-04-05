@@ -1,5 +1,6 @@
 package com.gto.gtocore.mixin.gtm;
 
+import com.gto.gtocore.api.init.InitRecipe;
 import com.gto.gtocore.api.recipe.FastSizedIngredient;
 import com.gto.gtocore.common.data.GTORecipes;
 import com.gto.gtocore.data.Data;
@@ -12,7 +13,6 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntProviderIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.common.CommonProxy;
-import com.gregtechceu.gtceu.common.data.GTRecipes;
 import com.gregtechceu.gtceu.data.loot.DungeonLootLoader;
 import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 import com.gregtechceu.gtceu.data.pack.GTPackSource;
@@ -45,12 +45,11 @@ public class CommonProxyMixin {
         if (!GTORecipes.cache) {
             if (!GTCEu.isClientSide()) {
                 Data.init();
+                InitRecipe.init();
             }
             DungeonLootLoader.init();
             DungeonLoot.init();
         }
-        GTRecipes.recipeRemoval();
-        GTRecipes.recipeAddition(GTDynamicDataPack::addRecipe);
         event.addRepositorySource(new GTPackSource("gtceu:dynamic_data", event.getPackType(), Pack.Position.BOTTOM, GTDynamicDataPack::new));
         ci.cancel();
     }
