@@ -1,6 +1,5 @@
 package com.gto.gtocore.mixin.gtm;
 
-import com.gto.gtocore.api.init.InitRecipe;
 import com.gto.gtocore.api.recipe.FastSizedIngredient;
 import com.gto.gtocore.common.data.GTORecipes;
 import com.gto.gtocore.data.Data;
@@ -23,6 +22,8 @@ import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,8 +36,9 @@ import java.util.function.Consumer;
 @Mixin(CommonProxy.class)
 public class CommonProxyMixin {
 
+    @Contract(pure = true)
     @ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Ljava/util/Collection;forEach(Ljava/util/function/Consumer;)V"), remap = false)
-    private static Consumer<MaterialRegistry> modifyArg(Consumer<MaterialRegistry> p) {
+    private static @NotNull Consumer<MaterialRegistry> modifyArg(Consumer<MaterialRegistry> p) {
         return (registry) -> {};
     }
 
@@ -45,7 +47,6 @@ public class CommonProxyMixin {
         if (!GTORecipes.cache) {
             if (!GTCEu.isClientSide()) {
                 Data.init();
-                InitRecipe.init();
             }
             DungeonLootLoader.init();
             DungeonLoot.init();

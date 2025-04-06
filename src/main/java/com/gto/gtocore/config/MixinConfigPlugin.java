@@ -1,7 +1,5 @@
 package com.gto.gtocore.config;
 
-import com.gto.gtocore.GTOCore;
-
 import com.gregtechceu.gtceu.GTCEu;
 
 import com.lowdragmc.lowdraglib.core.mixins.MixinPluginShared;
@@ -98,9 +96,6 @@ public final class MixinConfigPlugin implements IMixinConfigPlugin {
                     } catch (NoSuchFieldException | IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
-                }
-                if (MIXINS_ON_CLASS_INFO != null) {
-                    GTOCore.LOGGER.info("恭喜 MIXINS_ON_CLASS_INFO != null");
                 }
             }
         }

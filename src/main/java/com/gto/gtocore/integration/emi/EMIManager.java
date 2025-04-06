@@ -1,9 +1,11 @@
 package com.gto.gtocore.integration.emi;
 
+import com.gto.gtocore.GTOCore;
 import com.gto.gtocore.common.data.GTORecipes;
 
 import net.minecraft.resources.ResourceLocation;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
@@ -15,11 +17,9 @@ import dev.emi.emi.registry.EmiStackList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Nullable;
 
@@ -35,8 +35,14 @@ public final class EMIManager implements EmiRecipeManager {
     private final Map<EmiRecipeCategory, List<EmiRecipe>> byCategory;
     private final Map<ResourceLocation, EmiRecipe> byId;
 
-    public EMIManager(List<EmiRecipeCategory> categories, Map<EmiRecipeCategory, List<EmiIngredient>> workstations, List<EmiRecipe> recipes) {
+    public EMIManager(@NotNull List<EmiRecipeCategory> categories, Map<EmiRecipeCategory, List<EmiIngredient>> workstations, @NotNull List<EmiRecipe> recipes) {
         recipes.addAll(GTORecipes.EMI_RECIPES);
+        if (GTORecipes.EMI_RECIPES == null) {
+            GTOCore.LOGGER.error("EMI_RECIPES 未初始化!");
+            GTORecipes.EMI_RECIPES = ImmutableSet.of();
+        } else {
+            GTOCore.LOGGER.info("加载了 {} 个 EMI 配方", GTORecipes.EMI_RECIPES.size());
+        }
         this.categories = categories;
         this.workstations = workstations;
         this.recipes = recipes;

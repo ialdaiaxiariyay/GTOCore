@@ -50,6 +50,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.gto.gtocore.api.init.InitRecipe.RECIPE_CALLBACKS;
 import static com.gto.gtocore.common.data.GTORecipes.*;
 
 public interface Data {
@@ -63,7 +64,6 @@ public interface Data {
         GTORecipeBuilder.initialization();
         RecipeFilter.init();
         Consumer<FinishedRecipe> consumer = GTDynamicDataPack::addRecipe;
-
         BlastProperty.GasTier.LOW.setFluid(() -> FluidIngredient.of(GTMaterials.Nitrogen.getFluid(1000)));
         BlastProperty.GasTier.MID.setFluid(() -> FluidIngredient.of(GTMaterials.Helium.getFluid(100)));
         BlastProperty.GasTier.HIGH.setFluid(() -> FluidIngredient.of(GTMaterials.Argon.getFluid(100)));
@@ -84,11 +84,10 @@ public interface Data {
         AssemblyLineLoader.init(consumer);
         BatteryRecipes.init(consumer);
         DecorationRecipes.init(consumer);
-
+        GCYMRecipes.init(consumer);
         CircuitRecipes.init(consumer);
         MetaTileEntityLoader.init(consumer);
 
-        GCYMRecipes.init(consumer);
         RecipeAddition.init(consumer);
         SHAPED_FILTER_RECIPES = null;
         SHAPELESS_FILTER_RECIPES = null;
@@ -124,6 +123,11 @@ public interface Data {
         LootSystem.defaultBlockTable(RegistriesUtils.getBlock("farmersrespite:kettle"));
         GTOLoots.BLOCKS.forEach(b -> LootSystem.defaultBlockTable((Block) b));
         GTOLoots.BLOCKS = null;
+
+        for (Consumer<Consumer<FinishedRecipe>> callback : RECIPE_CALLBACKS) {
+            callback.accept(consumer);
+        }
+
         GTOCore.LOGGER.info("Data loading took {}ms", System.currentTimeMillis() - time);
     }
 
@@ -133,6 +137,8 @@ public interface Data {
         public void run() {
             init();
             IMultiblockMachineDefinition.init();
+            // 始终初始化 EMI_RECIPES，避免 null
+            ImmutableSet.Builder<EmiRecipe> recipes = ImmutableSet.builder();
             if (GTCEu.Mods.isEMILoaded()) {
                 long time = System.currentTimeMillis();
                 EmiConfig.logUntranslatedTags = false;
@@ -140,27 +146,32 @@ public interface Data {
                 EmiRepairItemRecipe.TOOLS.clear();
                 GTORecipeBuilder.RECIPE_MAP.values().forEach(recipe -> recipe.recipeCategory.addRecipe(recipe));
                 EMI_RECIPE_WIDGETS = new Object2ObjectOpenHashMap<>();
-                ImmutableSet.Builder<EmiRecipe> recipes = ImmutableSet.builder();
+                // 构建 EMI 配方
                 for (GTRecipeCategory category : GTRegistries.RECIPE_CATEGORIES) {
                     if (!category.shouldRegisterDisplays()) continue;
                     var type = category.getRecipeType();
                     if (category == type.getCategory()) type.buildRepresentativeRecipes();
                     EmiRecipeCategory emiCategory = GTRecipeEMICategory.CATEGORIES.apply(category);
-                    type.getRecipesInCategory(category).stream().map(recipe -> new GTEMIRecipe(recipe, emiCategory)).forEach(recipes::add);
+                    type.getRecipesInCategory(category).stream()
+                            .map(recipe -> new GTEMIRecipe(recipe, emiCategory))
+                            .forEach(recipes::add);
                 }
+                // 添加多区块机器信息
                 for (MachineDefinition machine : GTRegistries.MACHINES.values()) {
                     if (machine instanceof MultiblockMachineDefinition definition && definition.isRenderXEIPreview()) {
                         recipes.add(new MultiblockInfoEmiRecipe(definition));
                     }
                 }
-                EMI_RECIPE_WIDGETS = null;
-                EMI_RECIPES = recipes.build();
-                clearCategoryMap();
+
                 GTOCore.LOGGER.info("Pre initialization EMI GTRecipe took {}ms", System.currentTimeMillis() - time);
             }
+            // 无论 EMI 是否加载，确保 EMI_RECIPES 被赋值
+            EMI_RECIPES = recipes.build();
+            EMI_RECIPE_WIDGETS = null;
+            clearCategoryMap();
         }
 
-        private static void clearCategoryMap() {
+        private void clearCategoryMap() {
             if (GTOConfig.INSTANCE.recipeCheck) return;
             for (GTRecipeType type : GTRegistries.RECIPE_TYPES) {
                 if (type == GTORecipeTypes.FURNACE_RECIPES) {
