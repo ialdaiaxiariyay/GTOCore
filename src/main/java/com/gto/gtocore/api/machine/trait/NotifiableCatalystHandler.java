@@ -3,12 +3,12 @@ package com.gto.gtocore.api.machine.trait;
 import com.gto.gtocore.api.data.tag.GTOTagPrefix;
 import com.gto.gtocore.api.recipe.FastSizedIngredient;
 import com.gto.gtocore.common.data.GTOItems;
+import com.gto.gtocore.utils.ItemUtils;
 
 import com.gregtechceu.gtceu.api.capability.IControllable;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
 import net.minecraft.core.Direction;
@@ -16,18 +16,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class NotifiableCatalystHandler extends NotifiableItemStackHandler {
+public final class NotifiableCatalystHandler extends NotifiableNotConsumableItemHandler {
 
     private final boolean damage;
 
     public NotifiableCatalystHandler(MetaMachine machine, int slots, boolean damage) {
-        super(machine, slots, IO.IN, IO.BOTH);
+        super(machine, slots, IO.BOTH);
         this.damage = damage;
         setFilter(i -> ChemicalHelper.getPrefix(i.getItem()) == GTOTagPrefix.CATALYST || i.is(GTOItems.CATALYST_BASE.get()));
     }
@@ -70,13 +71,14 @@ public final class NotifiableCatalystHandler extends NotifiableItemStackHandler 
     @Nullable
     public List<Ingredient> handleRecipeInner(IO io, GTRecipe recipe, List<Ingredient> left, boolean simulate) {
         if (io == IO.IN && machine instanceof IControllable controllable && controllable.isWorkingEnabled()) {
+            left = new ObjectArrayList<>(left);
             for (var it = left.listIterator(); it.hasNext();) {
                 var ingredient = it.next();
                 if (ingredient.isEmpty()) {
                     it.remove();
                     continue;
                 }
-                var items = ingredient.getItems();
+                var items = ItemUtils.getInnerIngredient(ingredient).getItems();
                 if (items.length == 0 || items[0].isEmpty()) {
                     it.remove();
                     continue;
@@ -99,13 +101,6 @@ public final class NotifiableCatalystHandler extends NotifiableItemStackHandler 
                             it.remove();
                             break;
                         }
-                    }
-                }
-                if (count > 0) {
-                    if (ingredient instanceof FastSizedIngredient si) {
-                        si.setAmount(count);
-                    } else {
-                        items[0].setCount(count);
                     }
                 }
             }

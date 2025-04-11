@@ -64,6 +64,7 @@ public interface Data {
         GTORecipeBuilder.initialization();
         RecipeFilter.init();
         Consumer<FinishedRecipe> consumer = GTDynamicDataPack::addRecipe;
+
         BlastProperty.GasTier.LOW.setFluid(() -> FluidIngredient.of(GTMaterials.Nitrogen.getFluid(1000)));
         BlastProperty.GasTier.MID.setFluid(() -> FluidIngredient.of(GTMaterials.Helium.getFluid(100)));
         BlastProperty.GasTier.HIGH.setFluid(() -> FluidIngredient.of(GTMaterials.Argon.getFluid(100)));
@@ -84,10 +85,11 @@ public interface Data {
         AssemblyLineLoader.init(consumer);
         BatteryRecipes.init(consumer);
         DecorationRecipes.init(consumer);
-        GCYMRecipes.init(consumer);
+
         CircuitRecipes.init(consumer);
         MetaTileEntityLoader.init(consumer);
 
+        GCYMRecipes.init(consumer);
         RecipeAddition.init(consumer);
         SHAPED_FILTER_RECIPES = null;
         SHAPELESS_FILTER_RECIPES = null;

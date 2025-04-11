@@ -9,6 +9,7 @@ import com.gto.gtocore.api.pattern.GTOPredicates;
 import com.gto.gtocore.common.data.*;
 import com.gto.gtocore.common.machine.multiblock.electric.FishingGroundMachine;
 import com.gto.gtocore.common.machine.multiblock.electric.StellarForgeMachine;
+import com.gto.gtocore.common.machine.multiblock.electric.gcym.GCYMMultiblockMachine;
 import com.gto.gtocore.common.machine.multiblock.electric.voidseries.VoidFluidDrillingRigMachine;
 import com.gto.gtocore.common.machine.multiblock.electric.voidseries.VoidMinerMachine;
 import com.gto.gtocore.common.machine.multiblock.noenergy.AdvancedPrimitiveBlastFurnaceMachine;
@@ -36,7 +37,6 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.material.Fluids;
 
 import appeng.core.definitions.AEBlocks;
-import com.hepdd.gtmthings.data.CustomMachines;
 import earth.terrarium.adastra.common.registry.ModBlocks;
 
 import java.util.Comparator;
@@ -578,7 +578,7 @@ public interface MultiBlockA {
             .workableCasingRenderer(GTCEu.id("block/casings/voltage/uxv/side"), GTCEu.id("block/multiblock/fusion_reactor"))
             .register();
 
-    MultiblockMachineDefinition PRECISION_ASSEMBLER = multiblock("precision_assembler", "精密组装机", TierCasingParallelMultiblockMachine.createParallel(m -> 1 << (m.getCasingTiers().get(GLASS_TIER)), true, GLASS_TIER, MACHINE_CASING_TIER))
+    MultiblockMachineDefinition PRECISION_ASSEMBLER = multiblock("precision_assembler", "精密组装机", TierCasingParallelMultiblockMachine.createParallel(m -> 1 << (m.getCasingTier(GLASS_TIER)), true, GLASS_TIER, MACHINE_CASING_TIER))
             .allRotation()
             .recipe(GTORecipeTypes.PRECISION_ASSEMBLER_RECIPES)
             .recipe(GTRecipeTypes.ASSEMBLER_RECIPES)
@@ -681,35 +681,6 @@ public interface MultiBlockA {
                     .where('e', blocks(GTBlocks.HERMETIC_CASING_IV.get()))
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/solid/machine_casing_solid_steel"), GTCEu.id("block/machines/gas_collector"))
-            .register();
-
-    MultiblockMachineDefinition AGGREGATION_DEVICE = multiblock("aggregation_device", "聚合装置", CustomParallelMultiblockMachine.createParallel(m -> 1 << Math.max(0, (m.getTier() - GTValues.UEV)), true))
-            .allRotation()
-            .recipe(GTORecipeTypes.AGGREGATION_DEVICE_RECIPES)
-            .tooltipsText("Voltage tier above UEV increases maximum parallelism x2", "电压等级每高出UEV一级最大并行数x2")
-            .customTooltipsBuilder(true, false, false)
-            .perfectOverclock()
-            .block(GTBlocks.FUSION_CASING)
-            .pattern((definition) -> FactoryBlockPattern.start()
-                    .aisle("a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a")
-                    .aisle("a  b  ccc  b  a", "      c c      ", "c     c c     c", "c  d  cdc  d  c", "c     c c     c", "      c c      ", "a  b  ccc  b  a")
-                    .aisle("a  b  ccc  b  a", "c     c c     c", "cdddddddddddddc", "idddddddddddddi", "cdddddddddddddc", "c     c c     c", "a  b  ccc  b  a")
-                    .aisle("a  b  ccc  b  a", "c  d  cdc  d  c", "idddddddddddddi", "ieeeeeeeeeeeeeg", "idddddddddddddi", "c  d  cdc  d  c", "a  b  ccc  b  a")
-                    .aisle("a  b  ccc  b  a", "c     c c     c", "cdddddddddddddc", "idddddddddddddi", "cdddddddddddddc", "c     c c     c", "a  b  ccc  b  a")
-                    .aisle("a  b  ccc  b  a", "      c c      ", "c     c c     c", "c  d  cdc  d  c", "c     c c     c", "      c c      ", "a  b  ccc  b  a")
-                    .aisle("a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  c~c  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a", "a  b  ccc  b  a")
-                    .where('~', controller(blocks(definition.get())))
-                    .where('c', blocks(GTBlocks.FUSION_CASING.get())
-                            .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(32).setPreviewCount(32)))
-                    .where('d', blocks(GTBlocks.FUSION_CASING_MK3.get()))
-                    .where('b', blocks(GTBlocks.FUSION_COIL.get()))
-                    .where('e', blocks(GTOBlocks.AGGREGATIONE_CORE.get()))
-                    .where('a', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.NaquadahEnriched)))
-                    .where('i', blocks(GTMachines.ITEM_IMPORT_BUS[0].get()).or(blocks(CustomMachines.HUGE_ITEM_IMPORT_BUS[0].getBlock())))
-                    .where('g', abilities(EXPORT_ITEMS))
-                    .where(' ', any())
-                    .build())
-            .workableCasingRenderer(GTCEu.id("block/casings/fusion/fusion_casing"), GTCEu.id("block/multiblock/fusion_reactor"))
             .register();
 
     MultiblockMachineDefinition ENGRAVING_LASER_PLANT = multiblock("engraving_laser_plant", "激光蚀刻工厂", ElectricMultiblockMachine::new)
@@ -1697,7 +1668,7 @@ public interface MultiBlockA {
             .workableCasingRenderer(GTCEu.id("block/casings/solid/machine_casing_clean_stainless_steel"), GTCEu.id("block/multiblock/pyrolyse_oven"))
             .register();
 
-    MultiblockMachineDefinition LARGE_ROCK_CRUSHER = multiblock("large_rock_crusher", "大型碎岩机", ElectricMultiblockMachine::new)
+    MultiblockMachineDefinition LARGE_ROCK_CRUSHER = multiblock("large_rock_crusher", "大型碎岩机", GCYMMultiblockMachine::new)
             .allRotation()
             .recipe(GTRecipeTypes.ROCK_BREAKER_RECIPES)
             .eutMultiplierTooltips(0.8)
@@ -1709,7 +1680,7 @@ public interface MultiBlockA {
             .pattern((definition) -> FactoryBlockPattern.start()
                     .aisle("AAAAA", "AAAAA", "AAAAA", "AAAAA")
                     .aisle("AAAAA", "ABBBA", "A   A", "A C A")
-                    .aisle("AAAAA", "AB BA", "A   A", "ACCCA")
+                    .aisle("AAAAA", "ABaBA", "A   A", "ACCCA")
                     .aisle("AAAAA", "ABBBA", "A   A", "A C A")
                     .aisle("AAAAA", "AA~AA", "AAAAA", "AAAAA")
                     .where('~', controller(blocks(definition.get())))
@@ -1724,6 +1695,7 @@ public interface MultiBlockA {
                     .where('B', blocks(GCYMBlocks.CRUSHING_WHEELS.get()))
                     .where('C', frames(GTMaterials.MaragingSteel300))
                     .where(' ', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/secure_maceration_casing"), GTCEu.id("block/machines/rock_crusher"))
             .register();

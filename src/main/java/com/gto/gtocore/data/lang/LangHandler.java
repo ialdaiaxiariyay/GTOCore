@@ -133,6 +133,7 @@ public final class LangHandler {
         addENCN(TierCasingTrait.getTierTranslationKey(COMPONENT_ASSEMBLY_CASING_TIER), "Casing Tier: %s", "外壳等级：%s");
         addENCN(TierCasingTrait.getTierTranslationKey(POWER_MODULE_TIER), "Power Module Tier: %s", "动力模块等级：%s");
         addENCN(TierCasingTrait.getTierTranslationKey(STELLAR_CONTAINMENT_TIER), "Stellar Container Tier: %s", "恒星热力容器等级：%s");
+        addENCN(TierCasingTrait.getTierTranslationKey(INTEGRAL_FRAMEWORK_TIER), "Integral Framework Tier: %s", "整体框架等级：%s");
         addENCN("gtocore.recipe.ev_max", "Maximum Neutron Energy: %s MeV", "最大中子动能：%s MeV");
         addENCN("gtocore.recipe.ev_min", "Minimum Neutron Energy: %s MeV", "最小中子动能：%s MeV");
         addENCN("gtocore.recipe.evt", "Energy Consumption per Tick: %s KeV", "每刻中子动能消耗：%s KeV");
@@ -153,7 +154,6 @@ public final class LangHandler {
         addENCN("gtocore.tier.advanced", "Advanced", "高级");
         addENCN("gtocore.tier.base", "Basic", "基础");
         addENCN("gtocore.tier.ultimate", "Ultimate", "终极");
-        addENCN("gtocore.universal.tooltip.ampere_out", "§bOutput Current: §r%sA", "§b输出电流：§r%sA");
 
         addENCN("config.jade.plugin_gtocore.accelerate_provider", "[GTOCore] Accelerated Bar", "[GTOCore] 加速条");
         addENCN("config.jade.plugin_gtocore.wireless_data_hatch_provider", "[GTOCore] Wireless Data", "[GTOCore] 无线数据");
@@ -161,6 +161,7 @@ public final class LangHandler {
         addENCN("config.jade.plugin_gtocore.vacuum_tier_provider", "[GTOCore] Vacuum Tier", "[GTOCore] 真空等级");
         addENCN("config.jade.plugin_gtocore.temperature_provider", "[GTOCore] Machine Temperature", "[GTOCore] 机器温度");
         addENCN("config.jade.plugin_gtocore.tick_time_provider", "[GTOCore] Tick Time", "[GTOCore] Tick时间");
+        addENCN("config.jade.plugin_gtocore.wireless_interactor_provider", "[GTOCore] Wireless Interactive Machine Info", "[GTOCore] 无线交互机器信息");
 
         addENCN("fluid.gtocore.gelid_cryotheum", "Gelid Cryotheum", "极寒之凛冰");
 
@@ -190,6 +191,22 @@ public final class LangHandler {
         addENCN("planet.gtocore.titan", "Titan", "土卫六");
         addENCN("planet.gtocore.titan_orbit", "Titan Orbit", "土卫六轨道");
         addENCN("gui.ad_astra.text.barnarda", "Barnarda", "巴纳德");
+
+        addENCN("gtocore.player_exp_status.header", "========== Player Experience Status ==========", "=========== 玩家经验状态 ===========");
+        addENCN("gtocore.player_exp_status.footer", "\n===========================================", "\n================================");
+        addENCN("gtocore.player_exp_status.player", "\nPlayer: ", "\n玩家: ");
+        addENCN("gtocore.player_exp_status.level", "\n  Level: ", "\n  等级: ");
+        addENCN("gtocore.player_exp_status.level_max", "max", "上限");
+        addENCN("gtocore.player_exp_status.experience", "\n  Experience: ", "\n  经验: ");
+        addENCN("gtocore.player_exp_status.experience_next", " for next level", " 升级");
+        addENCN("gtocore.player_exp_status.progress", "\n  Progress: ", "\n  升级进度: ");
+        addENCN("gtocore.player_exp_status.upgrade_institution", "\n  Enhance Iife Intensity to upgrade", "\n  提升生命强度以升级");
+        addENCN("gtocore.player_exp_status.body_name", "Life Intensity", "生命强度");
+        addENCN("gtocore.player_exp_status.health_name", "Physique", "体格");
+        addENCN("gtocore.player_exp_status.attack_name", "Strength", "肌肉");
+        addENCN("gtocore.player_exp_status.open", "ExperienceSystemOpened", "经验系统已开启");
+        addENCN("gtocore.player_exp_status.close", "ExperienceSystemClosed", "经验系统已关闭");
+        addENCN("gtocore.player_exp_status.get_experience", "you got %s point of %s experience", "你获得了%s点%s经验");
     }
 
     public static void enInitialize(LanguageProvider provider) {

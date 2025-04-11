@@ -2,11 +2,14 @@ package com.gto.gtocore.common.data.machines;
 
 import com.gto.gtocore.api.machine.multiblock.CoilCustomParallelMultiblockMachine;
 import com.gto.gtocore.api.machine.multiblock.CoilMultiblockMachine;
-import com.gto.gtocore.api.machine.multiblock.ElectricMultiblockMachine;
 import com.gto.gtocore.api.machine.part.GTOPartAbility;
 import com.gto.gtocore.api.pattern.GTOPredicates;
+import com.gto.gtocore.client.renderer.machine.FluidRenderer;
 import com.gto.gtocore.common.data.GTORecipeModifiers;
 import com.gto.gtocore.common.data.GTORecipeTypes;
+import com.gto.gtocore.common.machine.multiblock.electric.gcym.GCYMMultiblockMachine;
+import com.gto.gtocore.common.machine.multiblock.electric.gcym.LargeChemicalBathMachine;
+import com.gto.gtocore.common.machine.multiblock.electric.gcym.LargeMixerMachine;
 import com.gto.gtocore.common.machine.multiblock.part.ParallelHatchPartMachine;
 
 import com.gregtechceu.gtceu.GTCEu;
@@ -21,15 +24,11 @@ import com.gregtechceu.gtceu.api.pattern.MultiblockShapeInfo;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
-import com.gregtechceu.gtceu.client.renderer.machine.gcym.LargeChemicalBathRenderer;
-import com.gregtechceu.gtceu.client.renderer.machine.gcym.LargeMixerRenderer;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.machines.GTAEMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMachineUtils;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.DistillationTowerMachine;
-import com.gregtechceu.gtceu.common.machine.multiblock.electric.gcym.LargeChemicalBathMachine;
-import com.gregtechceu.gtceu.common.machine.multiblock.electric.gcym.LargeMixerMachine;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -68,7 +67,7 @@ public interface GCYMMachines {
             IV, LuV, ZPM, UV, UHV, UEV, UIV, UXV, OpV, MAX);
 
     MultiblockMachineDefinition LARGE_MACERATION_TOWER = REGISTRATE
-            .multiblock("large_maceration_tower", ElectricMultiblockMachine::new)
+            .multiblock("large_maceration_tower", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -81,7 +80,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXX", "XXXXX", "XXXXX", "XXXXX")
                     .aisle("XXXXX", "XGGGX", "XGGGX", "XAAAX")
-                    .aisle("XXXXX", "XGGGX", "XGGGX", "XAAAX")
+                    .aisle("XXaXX", "XGGGX", "XGGGX", "XAAAX")
                     .aisle("XXXXX", "XGGGX", "XGGGX", "XAAAX")
                     .aisle("XXXXX", "XXXXX", "XXSXX", "XXXXX")
                     .where('S', controller(blocks(definition.get())))
@@ -90,6 +89,7 @@ public interface GCYMMachines {
                             .or(autoAbilities(true, false, true)))
                     .where('G', blocks(CRUSHING_WHEELS.get()))
                     .where('A', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/secure_maceration_casing"),
                     GTCEu.id("block/multiblock/gcym/large_maceration_tower"))
@@ -110,7 +110,7 @@ public interface GCYMMachines {
                     .aisle("XXXXX", "XXXXX", "XXXXX")
                     .aisle("XXXXX", "XTTTX", "X   X")
                     .aisle("XXXXX", "X   X", "X   X")
-                    .aisle("XXXXX", "X   X", "X   X")
+                    .aisle("XXaXX", "X   X", "X   X")
                     .aisle("XXXXX", "X   X", "X   X")
                     .aisle("XXXXX", "XTTTX", "X   X")
                     .aisle("XXXXX", "XXSXX", "XXXXX")
@@ -120,14 +120,14 @@ public interface GCYMMachines {
                             .or(autoAbilities(true, false, true)))
                     .where(' ', air())
                     .where('T', blocks(CASING_TITANIUM_PIPE.get()))
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
-            .renderer(() -> new LargeChemicalBathRenderer(GTCEu.id("block/casings/gcym/watertight_casing"),
-                    GTCEu.id("block/multiblock/gcym/large_chemical_bath")))
+            .renderer(FluidRenderer.create(GTCEu.id("block/casings/gcym/watertight_casing"), GTCEu.id("block/multiblock/gcym/large_chemical_bath")))
             .hasTESR(true)
             .register();
 
     MultiblockMachineDefinition LARGE_CENTRIFUGE = REGISTRATE
-            .multiblock("large_centrifuge", ElectricMultiblockMachine::new)
+            .multiblock("large_centrifuge", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -140,7 +140,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("#XXX#", "XXXXX", "#XXX#")
                     .aisle("XXXXX", "XAPAX", "XXXXX")
-                    .aisle("XXXXX", "XPAPX", "XXXXX")
+                    .aisle("XXXXX", "XPaPX", "XXXXX")
                     .aisle("XXXXX", "XAPAX", "XXXXX")
                     .aisle("#XXX#", "XXSXX", "#XXX#")
                     .where('S', controller(blocks(definition.get())))
@@ -150,6 +150,7 @@ public interface GCYMMachines {
                     .where('P', blocks(CASING_STEEL_PIPE.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/vibration_safe_casing"),
                     GTCEu.id("block/multiblock/gcym/large_centrifuge"))
@@ -169,7 +170,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("#XXX#", "#XXX#", "#XXX#", "#XXX#", "#XXX#", "##F##")
                     .aisle("XXXXX", "XAPAX", "XAAAX", "XAPAX", "XAAAX", "##F##")
-                    .aisle("XXXXX", "XPPPX", "XAPAX", "XPPPX", "XAGAX", "FFGFF")
+                    .aisle("XXaXX", "XPPPX", "XAPAX", "XPPPX", "XAGAX", "FFGFF")
                     .aisle("XXXXX", "XAPAX", "XAAAX", "XAPAX", "XAAAX", "##F##")
                     .aisle("#XXX#", "#XSX#", "#XXX#", "#XXX#", "#XXX#", "##F##")
                     .where('S', controller(blocks(definition.get())))
@@ -181,14 +182,14 @@ public interface GCYMMachines {
                     .where('P', blocks(CASING_TITANIUM_PIPE.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
-            .renderer(() -> new LargeMixerRenderer(GTCEu.id("block/casings/gcym/reaction_safe_mixing_casing"),
-                    GTCEu.id("block/multiblock/gcym/large_mixer")))
+            .renderer(FluidRenderer.create(GTCEu.id("block/casings/gcym/reaction_safe_mixing_casing"), GTCEu.id("block/multiblock/gcym/large_mixer")))
             .hasTESR(true)
             .register();
 
     MultiblockMachineDefinition LARGE_ELECTROLYZER = REGISTRATE
-            .multiblock("large_electrolyzer", ElectricMultiblockMachine::new)
+            .multiblock("large_electrolyzer", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -201,20 +202,21 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXX", "XXXXX", "XXXXX")
                     .aisle("XXXXX", "XCCCX", "XCCCX")
-                    .aisle("XXXXX", "XCCCX", "XCCCX")
+                    .aisle("XXaXX", "XCCCX", "XCCCX")
                     .aisle("XXXXX", "XXSXX", "XXXXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_NONCONDUCTING.get()).setMinGlobalLimited(30)
                             .or(GTOPredicates.autoMnaAccelerateAbilities(definition.getRecipeTypes()))
                             .or(autoAbilities(true, false, true)))
                     .where('C', blocks(ELECTROLYTIC_CELL.get()))
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/nonconducting_casing"),
                     GTCEu.id("block/multiblock/gcym/large_electrolyzer"))
             .register();
 
     MultiblockMachineDefinition LARGE_ELECTROMAGNET = REGISTRATE
-            .multiblock("large_electromagnet", ElectricMultiblockMachine::new)
+            .multiblock("large_electromagnet", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -228,20 +230,21 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXX", "XXXXX", "XXXXX")
                     .aisle("XCXCX", "XCXCX", "XCXCX")
-                    .aisle("XCXCX", "XCXCX", "XCXCX")
+                    .aisle("XCaCX", "XCXCX", "XCXCX")
                     .aisle("XXXXX", "XXSXX", "XXXXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_NONCONDUCTING.get()).setMinGlobalLimited(35)
                             .or(GTOPredicates.autoMnaAccelerateAbilities(definition.getRecipeTypes()))
                             .or(autoAbilities(true, false, true)))
                     .where('C', blocks(ELECTROLYTIC_CELL.get()))
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/nonconducting_casing"),
                     GTCEu.id("block/multiblock/gcym/large_electrolyzer"))
             .register();
 
     MultiblockMachineDefinition LARGE_PACKER = REGISTRATE
-            .multiblock("large_packer", ElectricMultiblockMachine::new)
+            .multiblock("large_packer", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -257,20 +260,21 @@ public interface GCYMMachines {
                     .aisle("XXX", "XAX", "XXX")
                     .aisle("XXX", "XAX", "XXX")
                     .aisle("XXX", "XAX", "XXX")
-                    .aisle("XXX", "XAX", "XXX")
+                    .aisle("XXX", "XaX", "XXX")
                     .aisle("XXX", "XSX", "XXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_TUNGSTENSTEEL_ROBUST.get()).setMinGlobalLimited(30)
                             .or(GTOPredicates.autoMnaAccelerateAbilities(definition.getRecipeTypes()))
                             .or(autoAbilities(true, false, true)))
                     .where('A', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/solid/machine_casing_robust_tungstensteel"),
                     GTCEu.id("block/multiblock/gcym/large_packer"))
             .register();
 
     MultiblockMachineDefinition LARGE_ASSEMBLER = REGISTRATE
-            .multiblock("large_assembler", ElectricMultiblockMachine::new)
+            .multiblock("large_assembler", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -281,7 +285,7 @@ public interface GCYMMachines {
             .appearanceBlock(CASING_LARGE_SCALE_ASSEMBLING)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXXXXXX", "XXXXXXXXX", "XXXXXXXXX")
-                    .aisle("XXXXXXXXX", "XAAAXAAAX", "XGGGXXXXX")
+                    .aisle("XXXXXXXXX", "XAAAXAaAX", "XGGGXXXXX")
                     .aisle("XXXXXXXXX", "XGGGXXSXX", "XGGGX###X")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_LARGE_SCALE_ASSEMBLING.get()).setMinGlobalLimited(40)
@@ -290,13 +294,14 @@ public interface GCYMMachines {
                     .where('G', blocks(CASING_TEMPERED_GLASS.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/large_scale_assembling_casing"),
                     GTCEu.id("block/multiblock/gcym/large_assembler"))
             .register();
 
     MultiblockMachineDefinition LARGE_CIRCUIT_ASSEMBLER = REGISTRATE
-            .multiblock("large_circuit_assembler", ElectricMultiblockMachine::new)
+            .multiblock("large_circuit_assembler", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -310,7 +315,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXXXX", "XXXXXXX", "XXXXXXX")
                     .aisle("XXXXXXX", "XPPPPPX", "XGGGGGX")
-                    .aisle("XXXXXXX", "XAAAAPX", "XGGGGGX")
+                    .aisle("XXXXXXX", "XAAAaPX", "XGGGGGX")
                     .aisle("XXXXXXX", "XTTTTXX", "XXXXXXX")
                     .aisle("#####XX", "#####SX", "#####XX")
                     .where('S', controller(blocks(definition.get())))
@@ -325,13 +330,14 @@ public interface GCYMMachines {
                     .where('P', blocks(CASING_TUNGSTENSTEEL_PIPE.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/large_scale_assembling_casing"),
                     GTCEu.id("block/multiblock/gcym/large_circuit_assembler"))
             .register();
 
     MultiblockMachineDefinition LARGE_ARC_SMELTER = REGISTRATE
-            .multiblock("large_arc_smelter", ElectricMultiblockMachine::new)
+            .multiblock("large_arc_smelter", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -342,7 +348,7 @@ public interface GCYMMachines {
             .appearanceBlock(CASING_HIGH_TEMPERATURE_SMELTING)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("#XXX#", "#XXX#", "#XXX#", "#XXX#")
-                    .aisle("XXXXX", "XCACX", "XCACX", "XXXXX")
+                    .aisle("XXXXX", "XCaCX", "XCACX", "XXXXX")
                     .aisle("XXXXX", "XAAAX", "XAAAX", "XXMXX")
                     .aisle("XXXXX", "XACAX", "XACAX", "XXXXX")
                     .aisle("#XXX#", "#XSX#", "#XXX#", "#XXX#")
@@ -354,12 +360,13 @@ public interface GCYMMachines {
                     .where('M', abilities(MUFFLER))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/high_temperature_smelting_casing"), GTCEu.id("block/multiblock/gcym/large_arc_smelter"))
             .register();
 
     MultiblockMachineDefinition LARGE_ENGRAVING_LASER = REGISTRATE
-            .multiblock("large_engraving_laser", ElectricMultiblockMachine::new)
+            .multiblock("large_engraving_laser", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -371,7 +378,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXX", "XXGXX", "XXGXX", "XXXXX")
                     .aisle("XXXXX", "XAAAX", "XAAAX", "XKKKX")
-                    .aisle("XXXXX", "GAAAG", "GACAG", "XKXKX")
+                    .aisle("XXXXX", "GAaAG", "GACAG", "XKXKX")
                     .aisle("XXXXX", "XAAAX", "XAAAX", "XKKKX")
                     .aisle("XXSXX", "XXGXX", "XXGXX", "XXXXX")
                     .where('S', controller(blocks(definition.get())))
@@ -382,13 +389,14 @@ public interface GCYMMachines {
                     .where('G', blocks(CASING_TEMPERED_GLASS.get()))
                     .where('K', blocks(CASING_GRATE.get()))
                     .where('A', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/laser_safe_engraving_casing"),
                     GTCEu.id("block/multiblock/gcym/large_engraving_laser"))
             .register();
 
     MultiblockMachineDefinition LARGE_SIFTING_FUNNEL = REGISTRATE
-            .multiblock("large_sifting_funnel", ElectricMultiblockMachine::new)
+            .multiblock("large_sifting_funnel", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -401,7 +409,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("#X#X#", "#X#X#", "#XXX#", "XXXXX", "#XXX#")
                     .aisle("XXXXX", "XAXAX", "XKKKX", "XKKKX", "X###X")
-                    .aisle("#XXX#", "#XAX#", "XKKKX", "XKKKX", "X###X")
+                    .aisle("#XXX#", "#XaX#", "XKKKX", "XKKKX", "X###X")
                     .aisle("XXXXX", "XAXAX", "XKKKX", "XKKKX", "X###X")
                     .aisle("#X#X#", "#X#X#", "#XSX#", "XXXXX", "#XXX#")
                     .where('S', controller(blocks(definition.get())))
@@ -411,6 +419,7 @@ public interface GCYMMachines {
                     .where('K', blocks(CASING_GRATE.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/vibration_safe_casing"),
                     GTCEu.id("block/multiblock/gcym/large_sifting_funnel"))
@@ -466,7 +475,7 @@ public interface GCYMMachines {
             .register();
 
     MultiblockMachineDefinition LARGE_AUTOCLAVE = REGISTRATE
-            .multiblock("large_autoclave", ElectricMultiblockMachine::new)
+            .multiblock("large_autoclave", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -479,7 +488,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXX", "XXX", "XXX")
                     .aisle("XXX", "XTX", "XXX")
-                    .aisle("XXX", "XTX", "XXX")
+                    .aisle("XaX", "XTX", "XXX")
                     .aisle("XXX", "XTX", "XXX")
                     .aisle("XXX", "XSX", "XXX")
                     .where('S', controller(blocks(definition.get())))
@@ -488,13 +497,14 @@ public interface GCYMMachines {
                             .or(autoAbilities(true, false, true)))
                     .where('T', blocks(CASING_STEEL_PIPE.get()))
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/watertight_casing"),
                     GTCEu.id("block/multiblock/gcym/large_autoclave"))
             .register();
 
     MultiblockMachineDefinition LARGE_MATERIAL_PRESS = REGISTRATE
-            .multiblock("large_material_press", ElectricMultiblockMachine::new)
+            .multiblock("large_material_press", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -506,7 +516,7 @@ public interface GCYMMachines {
             .appearanceBlock(CASING_STRESS_PROOF)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXXXX", "XXXXXXX", "XXXXXXX")
-                    .aisle("XXXXXXX", "XAXGGGX", "XXXXXXX")
+                    .aisle("XXXXXXX", "XaXGGGX", "XXXXXXX")
                     .aisle("XXXXXXX", "XSXCCCX", "XXXXXXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_STRESS_PROOF.get()).setMinGlobalLimited(40)
@@ -514,14 +524,14 @@ public interface GCYMMachines {
                             .or(autoAbilities(true, false, true)))
                     .where('G', blocks(CASING_STEEL_GEARBOX.get()))
                     .where('C', blocks(CASING_TEMPERED_GLASS.get()))
-                    .where('A', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/stress_proof_casing"),
                     GTCEu.id("block/multiblock/gcym/large_material_press"))
             .register();
 
     MultiblockMachineDefinition LARGE_BREWER = REGISTRATE
-            .multiblock("large_brewer", ElectricMultiblockMachine::new)
+            .multiblock("large_brewer", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -536,7 +546,7 @@ public interface GCYMMachines {
                     .aisle("#XXX#", "#XXX#", "#XXX#", "#XXX#", "#####")
                     .aisle("XXXXX", "XCCCX", "XAAAX", "XXAXX", "##X##")
                     .aisle("XXXXX", "XCPCX", "XAPAX", "XAPAX", "#XMX#")
-                    .aisle("XXXXX", "XCCCX", "XAAAX", "XXAXX", "##X##")
+                    .aisle("XXXXX", "XCCCX", "XAAAX", "XXaXX", "##X##")
                     .aisle("#XXX#", "#XSX#", "#XXX#", "#XXX#", "#####")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_CORROSION_PROOF.get()).setMinGlobalLimited(50)
@@ -547,13 +557,14 @@ public interface GCYMMachines {
                     .where('M', abilities(MUFFLER))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/corrosion_proof_casing"),
                     GTCEu.id("block/multiblock/gcym/large_brewer"))
             .register();
 
     MultiblockMachineDefinition LARGE_CUTTER = REGISTRATE
-            .multiblock("large_cutter", ElectricMultiblockMachine::new)
+            .multiblock("large_cutter", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -566,7 +577,7 @@ public interface GCYMMachines {
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXXXX", "XXXXXXX", "XXXXXXX", "##XXXXX")
                     .aisle("XXXXXXX", "XAXCCCX", "XXXAAAX", "##XXXXX")
-                    .aisle("XXXXXXX", "XAXCCCX", "XXXAAAX", "##XXXXX")
+                    .aisle("XXXXXXX", "XaXCCCX", "XXXAAAX", "##XXXXX")
                     .aisle("XXXXXXX", "XSXGGGX", "XXXGGGX", "##XXXXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_SHOCK_PROOF.get()).setMinGlobalLimited(65)
@@ -576,6 +587,7 @@ public interface GCYMMachines {
                     .where('C', blocks(SLICING_BLADES.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/shock_proof_cutting_casing"),
                     GTCEu.id("block/multiblock/gcym/large_cutter"))
@@ -649,7 +661,7 @@ public interface GCYMMachines {
                 aisle5.add("#CEC#");
                 aisle5.add("#CCC#");
                 aisle5.add("#####");
-                for (int i = 1; i <= 12; ++i) {
+                for (int i = 1; i < 2; i = 12) {
                     aisle1.add(2, "##C##");
                     aisle2.add(2, "#C#C#");
                     aisle3.add(2, "C#P#C");
@@ -671,7 +683,7 @@ public interface GCYMMachines {
             .register();
 
     MultiblockMachineDefinition LARGE_EXTRACTOR = REGISTRATE
-            .multiblock("large_extractor", ElectricMultiblockMachine::new)
+            .multiblock("large_extractor", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -683,21 +695,21 @@ public interface GCYMMachines {
             .appearanceBlock(CASING_WATERTIGHT)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXX", "XXXXX", "XXXXX")
-                    .aisle("XXXXX", "XCACX", "XXXXX")
+                    .aisle("XXXXX", "XCaCX", "XXXXX")
                     .aisle("XXXXX", "XXSXX", "XXXXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_WATERTIGHT.get()).setMinGlobalLimited(25)
                             .or(GTOPredicates.autoMnaAccelerateAbilities(definition.getRecipeTypes()))
                             .or(autoAbilities(true, false, true)))
                     .where('C', blocks(CASING_STEEL_PIPE.get()))
-                    .where('A', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/watertight_casing"),
                     GTCEu.id("block/multiblock/gcym/large_extractor"))
             .register();
 
     MultiblockMachineDefinition LARGE_EXTRUDER = REGISTRATE
-            .multiblock("large_extruder", ElectricMultiblockMachine::new)
+            .multiblock("large_extruder", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -711,7 +723,7 @@ public interface GCYMMachines {
                     .aisle("##XXX", "##XXX", "##XXX")
                     .aisle("##XXX", "##XPX", "##XGX").setRepeatable(2)
                     .aisle("XXXXX", "XXXPX", "XXXGX")
-                    .aisle("XXXXX", "XAXPX", "XXXGX")
+                    .aisle("XXXXX", "XaXPX", "XXXGX")
                     .aisle("XXXXX", "XSXXX", "XXXXX")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_STRESS_PROOF.get()).setMinGlobalLimited(40)
@@ -719,7 +731,7 @@ public interface GCYMMachines {
                             .or(autoAbilities(true, false, true)))
                     .where('P', blocks(CASING_TITANIUM_PIPE.get()))
                     .where('G', blocks(CASING_TEMPERED_GLASS.get()))
-                    .where('A', air())
+                    .where('a', GTOPredicates.integralFramework())
                     .where('#', any())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/stress_proof_casing"),
@@ -727,7 +739,7 @@ public interface GCYMMachines {
             .register();
 
     MultiblockMachineDefinition LARGE_SOLIDIFIER = REGISTRATE
-            .multiblock("large_solidifier", ElectricMultiblockMachine::new)
+            .multiblock("large_solidifier", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -741,7 +753,7 @@ public interface GCYMMachines {
                     .aisle("#XXX#", "#XXX#", "#XXX#", "#XXX#")
                     .aisle("XXXXX", "XCACX", "XCACX", "XXXXX")
                     .aisle("XXXXX", "XAAAX", "XAAAX", "XXXXX")
-                    .aisle("XXXXX", "XCACX", "XCACX", "XXXXX")
+                    .aisle("XXXXX", "XCaCX", "XCACX", "XXXXX")
                     .aisle("#XXX#", "#XSX#", "#XXX#", "#XXX#")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_WATERTIGHT.get()).setMinGlobalLimited(45)
@@ -750,13 +762,14 @@ public interface GCYMMachines {
                     .where('C', blocks(CASING_STEEL_PIPE.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/watertight_casing"),
                     GTCEu.id("block/multiblock/gcym/large_solidifier"))
             .register();
 
     MultiblockMachineDefinition LARGE_WIREMILL = REGISTRATE
-            .multiblock("large_wiremill", ElectricMultiblockMachine::new)
+            .multiblock("large_wiremill", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -769,7 +782,7 @@ public interface GCYMMachines {
             .appearanceBlock(CASING_STRESS_PROOF)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("XXXXX", "XXXXX", "XXX##")
-                    .aisle("XXXXX", "X#CCX", "XXXXX")
+                    .aisle("XXXXX", "XaCCX", "XXXXX")
                     .aisle("XXXXX", "XSXXX", "XXX##")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_STRESS_PROOF.get()).setMinGlobalLimited(25)
@@ -777,6 +790,7 @@ public interface GCYMMachines {
                             .or(autoAbilities(true, false, true)))
                     .where('C', blocks(CASING_TITANIUM_GEARBOX.get()))
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/gcym/stress_proof_casing"),
                     GTCEu.id("block/multiblock/gcym/large_wiremill"))
@@ -870,7 +884,7 @@ public interface GCYMMachines {
             .register();
 
     MultiblockMachineDefinition MEGA_VACUUM_FREEZER = REGISTRATE
-            .multiblock("mega_vacuum_freezer", ElectricMultiblockMachine::new)
+            .multiblock("mega_vacuum_freezer", GCYMMultiblockMachine::new)
             .tooltips(Component.translatable("gtocore.machine.eut_multiplier.tooltip", 0.8))
             .tooltips(Component.translatable("gtocore.machine.duration_multiplier.tooltip", 0.6))
             .tooltips(Component.translatable("gtceu.multiblock.parallelizable.tooltip"))
@@ -881,18 +895,12 @@ public interface GCYMMachines {
             .recipeModifier(GTORecipeModifiers.GCYM_OVERCLOCKING, true)
             .appearanceBlock(CASING_ALUMINIUM_FROSTPROOF)
             .pattern(definition -> FactoryBlockPattern.start()
-                    .aisle("XXXXXXX#KKK", "XXXXXXX#KVK", "XXXXXXX#KVK", "XXXXXXX#KVK", "XXXXXXX#KKK", "XXXXXXX####",
-                            "XXXXXXX####")
-                    .aisle("XXXXXXX#KVK", "XPPPPPPPPPV", "XPAPAPX#VPV", "XPPPPPPPPPV", "XPAPAPX#KVK", "XPPPPPX####",
-                            "XXXXXXX####")
-                    .aisle("XXXXXXX#KVK", "XPAPAPXAVPV", "XAAAAAX#VPV", "XPAAAPX#VPV", "XAAAAAX#KVK", "XPAPAPX####",
-                            "XXXXXXX####")
-                    .aisle("XXXXXXX#KVK", "XPAPAPPPPPV", "XAAAAAX#VPV", "XPAAAPPPPPV", "XAAAAAX#KVK", "XPAPAPX####",
-                            "XXXXXXX####")
-                    .aisle("XXXXXXX#KKK", "XPPPPPX#KVK", "XPA#APX#KVK", "XPAAAPX#KVK", "XPAAAPX#KKK", "XPPPPPX####",
-                            "XXXXXXX####")
-                    .aisle("#XXXXX#####", "#XXSXX#####", "#XGGGX#####", "#XGGGX#####", "#XGGGX#####", "#XXXXX#####",
-                            "###########")
+                    .aisle("XXXXXXX#KKK", "XXXXXXX#KVK", "XXXXXXX#KVK", "XXXXXXX#KVK", "XXXXXXX#KKK", "XXXXXXX####", "XXXXXXX####")
+                    .aisle("XXXXXXX#KVK", "XPPPPPPPPPV", "XPAPAPX#VPV", "XPPPPPPPPPV", "XPAPAPX#KVK", "XPPPPPX####", "XXXXXXX####")
+                    .aisle("XXXaXXX#KVK", "XPAPAPXAVPV", "XAAAAAX#VPV", "XPAAAPX#VPV", "XAAAAAX#KVK", "XPAPAPX####", "XXXXXXX####")
+                    .aisle("XXXaXXX#KVK", "XPAPAPPPPPV", "XAAAAAX#VPV", "XPAAAPPPPPV", "XAAAAAX#KVK", "XPAPAPX####", "XXXXXXX####")
+                    .aisle("XXXXXXX#KKK", "XPPPPPX#KVK", "XPA#APX#KVK", "XPAAAPX#KVK", "XPAAAPX#KKK", "XPPPPPX####", "XXXXXXX####")
+                    .aisle("#XXXXX#####", "#XXSXX#####", "#XGGGX#####", "#XGGGX#####", "#XGGGX#####", "#XXXXX#####", "###########")
                     .where('S', controller(blocks(definition.get())))
                     .where('X', blocks(CASING_ALUMINIUM_FROSTPROOF.get()).setMinGlobalLimited(140)
                             .or(GTOPredicates.autoMnaAccelerateAbilities(definition.getRecipeTypes()))
@@ -903,6 +911,7 @@ public interface GCYMMachines {
                     .where('V', blocks(HEAT_VENT.get()))
                     .where('A', air())
                     .where('#', any())
+                    .where('a', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTCEu.id("block/casings/solid/machine_casing_frost_proof"),
                     GTCEu.id("block/multiblock/gcym/mega_vacuum_freezer"))

@@ -11,6 +11,8 @@ import static com.gregtechceu.gtceu.api.GTValues.*;
 
 public final class GTOMaterials {
 
+    private GTOMaterials() {}
+
     public static Map<Material, Integer> MATERIAL_VOLTAGE;
 
     public static Material HighPressureHydrogen;
@@ -110,6 +112,7 @@ public final class GTOMaterials {
     public static Material CesiumCarborane;
     public static Material SilverIodide;
     public static Material SilverNitrate;
+    public static Material SilverNitrateSolution;
     public static Material TrifluoroaceticPhosphateEster;
     public static Material EthyleneSulfide;
     public static Material EthylTrifluoroacetate;
@@ -267,6 +270,7 @@ public final class GTOMaterials {
     public static Material BabbittAlloy;
     public static Material DepletedUraniumAlloy;
     public static Material Trinaquadalloy;
+    public static Material NitinolA;
     public static Material ChaosInfinityAlloy;
     public static Material Grisium;
     public static Material Stellite;
@@ -380,6 +384,7 @@ public final class GTOMaterials {
     public static Material AshLeachingSolution;
     public static Material Tannic;
     public static Material GermaniumTetrachlorideSolution;
+    public static Material Pedot;
     public static Material Polyimide;
     public static Material Aniline;
     public static Material Oxydianiline;
@@ -436,6 +441,10 @@ public final class GTOMaterials {
     public static Material Soap;
     public static Material Tricotylphosphine;
     public static Material IridiumTrichlorideSolution;
+    public static Material Ethylenedioxythiophene;
+    public static Material Dietoxythiophene;
+    public static Material Perbromothiophene;
+    public static Material IronSulfate;
     public static Material LiquidHydrogen;
     public static Material BedrockSmoke;
     public static Material BedrockSootSolution;
@@ -869,6 +878,7 @@ public final class GTOMaterials {
     public static Material PureTrichlorosilane;
     public static Material PureSilane;
     public static Material TetrafluorosilaneSolution;
+    public static Material Tetrafluorosilane;
     public static Material HighPuritySilica;
     public static Material CarbonTetrafluoride;
     public static Material WellMixedYbcOxides;
@@ -917,6 +927,26 @@ public final class GTOMaterials {
     public static Material CascadeMFPC;
     public static Material InvalidationBasicMFPC;
     public static Material InvalidationCascadeMFPC;
+    public static Material RecycleBasicMFPC;
+    public static Material HollowCeramicMicrosphereRoughEmbryo;
+    public static Material HollowCeramicMicrospheres;
+    public static Material SilverCoatedHollowCeramicMicrospheres;
+    public static Material SilverCoatedOctaneCeramicBeads;
+    public static Material SealedPhaseChangeBeads;
+    public static Material CarbonNanotubeCoatedPhaseChangeMicrobeads;
+    public static Material MicrowaveAttenuatingCoatedPhaseChangeMicrobeads;
+    public static Material SurfaceFunctionalizedPhaseChangeMicrobeads;
+    public static Material RecycledPhaseChangeMicrobeads;
+    public static Material OctaneLoadedPhaseChangeMicrobeads;
+    public static Material ReactivatedPhaseChangeMicrobeads;
+    public static Material EthylSilicate;
+    public static Material SilicicAcid;
+    public static Material Polystyrene;
+    public static Material Trimethylsilanol;
+    public static Material Hexamethyldisiloxane;
+    public static Material Triethoxysilane;
+    public static Material Chloropropyltriethoxysilane;
+    public static Material KH550SilaneCouplingAgent;
 
     public static Material Manasteel;
     public static Material Terrasteel;

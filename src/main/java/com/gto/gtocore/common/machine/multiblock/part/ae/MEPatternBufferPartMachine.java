@@ -1,6 +1,10 @@
 package com.gto.gtocore.common.machine.multiblock.part.ae;
 
+import com.gto.gtocore.api.machine.trait.NotifiableNotConsumableFluidHandler;
+import com.gto.gtocore.api.machine.trait.NotifiableNotConsumableItemHandler;
+import com.gto.gtocore.api.recipe.FastSizedIngredient;
 import com.gto.gtocore.common.machine.trait.InternalSlotRecipeHandler;
+import com.gto.gtocore.utils.ItemUtils;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
@@ -15,7 +19,6 @@ import com.gregtechceu.gtceu.api.machine.fancyconfigurator.FancyInvConfigurator;
 import com.gregtechceu.gtceu.api.machine.fancyconfigurator.FancyTankConfigurator;
 import com.gregtechceu.gtceu.api.machine.feature.IDataStickInteractable;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
@@ -121,15 +124,15 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine implements ICra
 
     @Getter
     @Persisted
-    private final NotifiableItemStackHandler circuitInventorySimulated;
+    private final NotifiableNotConsumableItemHandler circuitInventorySimulated;
 
     @Getter
     @Persisted
-    private final NotifiableItemStackHandler shareInventory;
+    private final NotifiableNotConsumableItemHandler shareInventory;
 
     @Getter
     @Persisted
-    private final NotifiableFluidTank shareTank;
+    private final NotifiableNotConsumableFluidHandler shareTank;
 
     @Getter
     @Persisted
@@ -163,18 +166,18 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine implements ICra
         getMainNode().addService(ICraftingProvider.class, this);
         this.circuitInventorySimulated = createCircuitInventory();
         this.shareInventory = createShareInventory();
-        this.shareTank = new NotifiableFluidTank(this, 9, 8 * FluidType.BUCKET_VOLUME, IO.IN, IO.NONE);
+        this.shareTank = new NotifiableNotConsumableFluidHandler(this, 9, 8 * FluidType.BUCKET_VOLUME);
         this.internalRecipeHandler = new InternalSlotRecipeHandler(this, internalInventory);
     }
 
-    NotifiableItemStackHandler createShareInventory() {
-        return new NotifiableItemStackHandler(this, 9, IO.IN, IO.NONE);
+    NotifiableNotConsumableItemHandler createShareInventory() {
+        return new NotifiableNotConsumableItemHandler(this, 9, IO.NONE);
     }
 
-    NotifiableItemStackHandler createCircuitInventory() {
-        return new NotifiableItemStackHandler(this, 1, IO.IN, IO.NONE)
-                .setFilter(IntCircuitBehaviour::isIntegratedCircuit)
-                .shouldSearchContent(false);
+    NotifiableNotConsumableItemHandler createCircuitInventory() {
+        NotifiableNotConsumableItemHandler handle = new NotifiableNotConsumableItemHandler(this, 1, IO.NONE);
+        handle.setFilter(IntCircuitBehaviour::isIntegratedCircuit);
+        return handle;
     }
 
     @Override
@@ -199,8 +202,18 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine implements ICra
     }
 
     @Override
+    protected RecipeHandlerList getHandlerList() {
+        return RecipeHandlerList.NO_DATA;
+    }
+
+    @Override
     public NotifiableItemStackHandler getCircuitInventory() {
         return circuitInventorySimulated;
+    }
+
+    @Override
+    public boolean canShared() {
+        return false;
     }
 
     @Override
@@ -591,13 +604,14 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine implements ICra
                     continue;
                 }
 
-                var items = ingredient.getItems();
+                var items = ItemUtils.getInnerIngredient(ingredient).getItems();
                 if (items.length == 0 || items[0].isEmpty()) {
                     it.remove();
                     continue;
                 }
-
-                int amount = items[0].getCount();
+                int amount;
+                if (ingredient instanceof FastSizedIngredient si) amount = si.getAmount();
+                else amount = items[0].getCount();
                 synchronized (itemInventory) {
                     for (var it2 = itemInventory.object2LongEntrySet().iterator(); it2.hasNext();) {
                         var entry = it2.next();
@@ -617,7 +631,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine implements ICra
                         }
                         amount -= extracted;
 
-                        if (amount <= 0) {
+                        if (amount < 1) {
                             it.remove();
                             break;
                         }
@@ -663,7 +677,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine implements ICra
                         }
                         amount -= extracted;
 
-                        if (amount <= 0) {
+                        if (amount < 1) {
                             it.remove();
                             break;
                         }

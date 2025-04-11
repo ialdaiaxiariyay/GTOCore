@@ -132,7 +132,7 @@ public interface GTOMachines {
                     .tooltips(Component.translatable("gtocore.machine.lightning_rod.tooltip.0"))
                     .tooltips(Component.translatable("gtocore.machine.lightning_rod.tooltip.1"))
                     .tooltips(Component.translatable("gtocore.machine.lightning_rod.tooltip.2"))
-                    .tooltips(Component.translatable("gtocore.universal.tooltip.ampere_out", 512))
+                    .tooltips(Component.translatable("gtceu.universal.tooltip.amperage_out", 512))
                     .tooltips(Component.translatable("gtceu.universal.tooltip.voltage_out",
                             FormattingUtil.formatNumbers(V[tier - 1]), VNF[tier - 1]))
                     .tooltips(Component.translatable("gtceu.universal.tooltip.energy_storage_capacity",
@@ -149,7 +149,7 @@ public interface GTOMachines {
                     .renderer(() -> new SimpleGeneratorMachineRenderer(tier,
                             GTOCore.id("block/generators/primitive_magic_energy")))
                     .tooltips(Component.translatable("gtocore.machine.primitive_magic_energy.tooltip.0"))
-                    .tooltips(Component.translatable("gtocore.universal.tooltip.ampere_out", 16))
+                    .tooltips(Component.translatable("gtceu.universal.tooltip.amperage_out", 16))
                     .tooltips(Component.translatable("gtceu.universal.tooltip.voltage_out",
                             FormattingUtil.formatNumbers(V[tier]), VNF[tier]))
                     .tooltips(Component.translatable("gtceu.universal.tooltip.energy_storage_capacity",
@@ -167,7 +167,7 @@ public interface GTOMachines {
                     .hasTESR(true)
                     .tooltips(Component.translatable("gtocore.machine.wind_mill_turbine.tooltip.0"))
                     .tooltips(Component.translatable("gtocore.machine.wind_mill_turbine.tooltip.1"))
-                    .tooltips(Component.translatable("gtocore.universal.tooltip.ampere_out", 2))
+                    .tooltips(Component.translatable("gtceu.universal.tooltip.amperage_out", 2))
                     .tooltips(Component.translatable("gtceu.universal.tooltip.voltage_out",
                             FormattingUtil.formatNumbers(V[tier]), VNF[tier]))
                     .tooltips(Component.translatable("gtceu.universal.tooltip.energy_storage_capacity",
@@ -300,10 +300,6 @@ public interface GTOMachines {
                     .renderer(() -> new OverlayTieredMachineRenderer(tier, GTCEu.id("block/machine/part/item_bus.import")))
                     .register(),
             HV, EV, IV);
-
-    MachineDefinition[] HUGE_FLUID_IMPORT_HATCH = registerHugeFluidHatches("huge_input_hatch", "Huge Input Hatch", "巨型输入仓", "fluid_hatch.import", "fluid_hatch.import", IO.IN, PartAbility.IMPORT_FLUIDS);
-
-    MachineDefinition[] HUGE_FLUID_EXPORT_HATCH = registerHugeFluidHatches("huge_output_hatch", "Huge Output Hatch", "巨型输出仓", "fluid_hatch.export", "fluid_hatch.export", IO.OUT, PartAbility.EXPORT_FLUIDS);
 
     MachineDefinition[] WIRELESS_INPUT_HATCH_2 = registerWirelessEnergyHatch(IO.IN, 2,
             PartAbility.INPUT_ENERGY);

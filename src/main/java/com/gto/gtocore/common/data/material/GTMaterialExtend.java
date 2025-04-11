@@ -90,13 +90,14 @@ public interface GTMaterialExtend {
         Emerald.addFlags(GTOMaterialFlags.GENERATE_ARTIFICIAL_GEM);
         RhodiumPlatedPalladium.addFlags(DISABLE_ALLOY_PROPERTY);
         YttriumBariumCuprate.addFlags(DISABLE_ALLOY_PROPERTY);
+        IncoloyMA956.addFlags(GENERATE_GEAR);
         Kanthal.getProperty(BLAST).setEUtOverride(GTValues.VA[GTValues.MV]);
         Netherite.setProperty(BLAST, new BlastProperty(1748, BlastProperty.GasTier.MID, 480, 1340, 120, 120));
         Strontium.setProperty(FLUID, new FluidProperty(FluidStorageKeys.LIQUID, new FluidBuilder()));
         Barium.setProperty(FLUID, new FluidProperty(FluidStorageKeys.LIQUID, new FluidBuilder()));
         Cadmium.setProperty(FLUID, new FluidProperty(FluidStorageKeys.LIQUID, new FluidBuilder()));
         Iron.setProperty(PropertyKey.TOOL, ToolProperty.Builder.of(2.0F, 2.0F, 256, 2, GTToolType.MINING_HAMMER, GTToolType.SPADE, GTToolType.SAW, GTToolType.HARD_HAMMER, GTToolType.WRENCH, GTToolType.FILE, GTToolType.CROWBAR, GTToolType.SCREWDRIVER, GTToolType.WIRE_CUTTER, GTToolType.SCYTHE, GTToolType.BUTCHERY_KNIFE, GTToolType.DRILL_LV, GTToolType.DRILL_MV, GTToolType.DRILL_HV, GTToolType.DRILL_EV, GTToolType.DRILL_IV, GTToolType.CHAINSAW_LV, GTToolType.WRENCH_LV, GTToolType.WRENCH_HV, GTToolType.WRENCH_IV, GTToolType.BUZZSAW, GTToolType.SCREWDRIVER_LV, GTToolType.WIRE_CUTTER_LV, GTToolType.WIRE_CUTTER_HV, GTToolType.WIRE_CUTTER_IV).enchantability(14).addTypes(GTToolType.MORTAR).build());
-        Platinum.setProperty(BLAST, new BlastProperty(1810));
+        Platinum.setProperty(BLAST, new BlastProperty(1810, BlastProperty.GasTier.MID, 480, 820, 120, 110));
         RedAlloy.addFlags(GENERATE_SPRING_SMALL);
         PhosphorusPentoxide.addFlags(GTOMaterialFlags.GENERATE_CATALYST);
         Iodine.addFlags(GTOMaterialFlags.GENERATE_CATALYST);
@@ -114,6 +115,7 @@ public interface GTMaterialExtend {
         Platinum.addFlags(GTOMaterialFlags.GENERATE_CATALYST);
         Palladium.addFlags(GTOMaterialFlags.GENERATE_CATALYST);
         RhodiumPlatedPalladium.addFlags(GTOMaterialFlags.GENERATE_CATALYST);
+        Brass.addFlags(GTOMaterialFlags.GENERATE_CATALYST);
         HastelloyC276.addFlags(GENERATE_ROTOR);
         Steel.addFlags(GTOMaterialFlags.GENERATE_COMPONENT);
         Aluminium.addFlags(GTOMaterialFlags.GENERATE_COMPONENT);

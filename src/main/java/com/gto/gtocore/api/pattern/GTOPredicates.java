@@ -26,17 +26,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.lowdragmc.lowdraglib.utils.BlockInfo;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static com.gto.gtocore.api.GTOValues.GLASS_TIER;
-import static com.gto.gtocore.api.GTOValues.MACHINE_CASING_TIER;
-import static com.gto.gtocore.common.block.BlockMap.GLASSMAP;
-import static com.gto.gtocore.common.block.BlockMap.MACHINECASINGMAP;
+import static com.gto.gtocore.api.GTOValues.*;
+import static com.gto.gtocore.common.block.BlockMap.*;
 
 public interface GTOPredicates {
 
@@ -46,6 +44,10 @@ public interface GTOPredicates {
 
     static TraceabilityPredicate machineCasing() {
         return tierBlock(MACHINECASINGMAP, MACHINE_CASING_TIER);
+    }
+
+    static TraceabilityPredicate integralFramework() {
+        return tierBlock(INTEGRALFRAMEWORKMAP, INTEGRAL_FRAMEWORK_TIER);
     }
 
     static TraceabilityPredicate absBlocks() {
@@ -78,7 +80,7 @@ public interface GTOPredicates {
         return autoLaserAbilities(recipeType).or(Predicates.abilities(GTOPartAbility.THREAD_HATCH).setMaxGlobalLimited(1)).or(Predicates.abilities(GTOPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1));
     }
 
-    static TraceabilityPredicate tierBlock(Map<Integer, Supplier<?>> map, String tierType) {
+    static TraceabilityPredicate tierBlock(Int2ObjectMap<Supplier<?>> map, String tierType) {
         BlockInfo[] blockInfos = new BlockInfo[map.size()];
         int index = 0;
         for (Supplier<?> blockSupplier : map.values()) {
@@ -88,9 +90,9 @@ public interface GTOPredicates {
         }
         return new TraceabilityPredicate(state -> {
             BlockState blockState = state.getBlockState();
-            for (Map.Entry<Integer, Supplier<?>> entry : map.entrySet()) {
+            for (Int2ObjectMap.Entry<Supplier<?>> entry : map.int2ObjectEntrySet()) {
                 if (blockState.is((Block) entry.getValue().get())) {
-                    int tier = entry.getKey();
+                    int tier = entry.getIntKey();
                     int type = state.getMatchContext().getOrPut(tierType, tier);
                     if (type != tier) {
                         state.setError(new PatternStringError("gtocore.machine.pattern.error.tier"));

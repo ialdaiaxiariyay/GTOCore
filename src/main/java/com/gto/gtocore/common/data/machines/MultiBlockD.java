@@ -61,8 +61,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.phys.AABB;
 
-import com.hepdd.gtmthings.data.CustomMachines;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -308,7 +306,7 @@ public interface MultiBlockD {
                             .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
                             .or(abilities(MAINTENANCE).setExactLimit(1)))
                     .where('c', blocks(GTBlocks.CASING_LAMINATED_GLASS.get()))
-                    .where('d', blocks(GTMachines.ITEM_IMPORT_BUS[0].get()).or(blocks(CustomMachines.HUGE_ITEM_IMPORT_BUS[0].get())))
+                    .where('d', abilities(GTOPartAbility.ITEMS_INPUT))
                     .where('e', blocks(GTOBlocks.MACHINE_CASING_CIRCUIT_ASSEMBLY_LINE.get()))
                     .where('f', abilities(EXPORT_ITEMS))
                     .where('g', abilities(IMPORT_FLUIDS_4X))
@@ -822,6 +820,7 @@ public interface MultiBlockD {
             .durationMultiplierTooltips(0.8)
             .tooltipsText("Requires one corresponding tier small machine to operate", "需要放入一个对应配方等级的小机器才能运行")
             .tooltipsText("For each tier above ULV, maximum parallelism increases by 2", "配方等级每高出ULV一级，最大并行数+2")
+            .tooltipsText("The final recipe tier is constrained by the integral framework tier.", "最终配方等级受限于整体框架等级")
             .tooltipsText("Unable to obtain a clean environment through a clean maintenance warehouse", "无法通过超净维护仓获得洁净环境")
             .tooltipsKey("gtceu.machine.available_recipe_map_1.tooltip",
                     Component.translatable("gtceu.bender")
@@ -872,7 +871,7 @@ public interface MultiBlockD {
                             .or(abilities(EXPORT_FLUIDS))
                             .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2).setPreviewCount(1))
                             .or(abilities(MAINTENANCE).setExactLimit(1)))
-                    .where('c', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
+                    .where('c', GTOPredicates.integralFramework())
                     .build())
             .workableCasingRenderer(GTOCore.id("block/casings/multi_functional_casing"), GTCEu.id("block/multiblock/gcym/large_assembler"))
             .register();
@@ -1332,13 +1331,7 @@ public interface MultiBlockD {
             GTValues.UHV, GTValues.UEV);
 
     MultiblockMachineDefinition[] KUANGBIAO_ONE_GIANT_NUCLEAR_FUSION_REACTOR = registerTieredMultis("kuangbiao_one_giant_nuclear_fusion_reactor", tier -> "狂飙" + StringUtils.numberToChinese(tier - 5) + "号巨型聚变反应堆控制电脑",
-            (holder, tier) -> new FusionReactorMachine(holder, tier) {
-
-                @Override
-                public long getMaxVoltage() {
-                    return getOverclockVoltage();
-                }
-            }, (tier, builder) -> builder
+            AdvancedFusionReactorMachine::new, (tier, builder) -> builder
                     .allRotation()
                     .langValue("Fusion Reactor Computer MK %s".formatted(FormattingUtil.toRomanNumeral(tier - 5)))
                     .recipe(GTRecipeTypes.FUSION_RECIPES)
@@ -1346,7 +1339,7 @@ public interface MultiBlockD {
                     .tooltipsKey("gtceu.machine.fusion_reactor.capacity", FusionReactorMachine.calculateEnergyStorageFactor(tier, 16) / 1000000L)
                     .tooltipsKey("gtceu.machine.fusion_reactor.overclocking")
                     .parallelizableTooltips()
-                    .customTooltipsBuilder(false, true, false)
+                    .customTooltipsBuilder(false, true, true)
                     .recipeModifiers(GTORecipeModifiers.HATCH_PARALLEL, FusionReactorMachine::recipeModifier)
                     .block(() -> FusionCasings.getCasingState(tier))
                     .pattern((definition) -> {
@@ -1394,7 +1387,7 @@ public interface MultiBlockD {
                                 .where('A', blocks(GCYMBlocks.CASING_NONCONDUCTING.get()))
                                 .where('B', blocks(GTOBlocks.HIGH_STRENGTH_CONCRETE.get()))
                                 .where('C', frames(GTMaterials.Tungsten))
-                                .where('D', casing.or(abilities(IMPORT_FLUIDS).setPreviewCount(16)).or(abilities(EXPORT_FLUIDS).setPreviewCount(16)).or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1)).or(abilities(INPUT_LASER).setMaxGlobalLimited(16, 16)))
+                                .where('D', casing.or(abilities(IMPORT_FLUIDS).setPreviewCount(16)).or(abilities(EXPORT_FLUIDS).setPreviewCount(16)).or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1)).or(abilities(GTOPartAbility.THREAD_HATCH).setMaxGlobalLimited(1)).or(abilities(INPUT_LASER).setMaxGlobalLimited(16, 16)))
                                 .where('E', casing)
                                 .where('F', blocks(FusionCasings.getFrameState(tier)))
                                 .where('G', blocks(GTOBlocks.STRENGTHEN_THE_BASE_BLOCK.get()))
@@ -1414,7 +1407,7 @@ public interface MultiBlockD {
     MultiblockMachineDefinition CREATE_COMPUTATION = multiblock("create_computation", "创造计算机", (holder) -> new ComputationProviderMachine(holder, true))
             .allRotation()
             .recipe(GTRecipeTypes.DUMMY_RECIPES)
-            .tooltipsText("Input Voltage: %4§lMAX%r", "输入电压：§4§lMAX§r")
+            .tooltipsKey("gtceu.universal.tooltip.voltage_in", Integer.MAX_VALUE, GTValues.VNF[GTValues.MAX])
             .overclock()
             .block(GTBlocks.ADVANCED_COMPUTER_CASING)
             .pattern((definition) -> FactoryBlockPattern.start()

@@ -11,13 +11,20 @@ import com.gregtechceu.gtceu.api.recipe.content.Content;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
+import committee.nova.mods.avaritia.api.utils.ItemUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
@@ -27,6 +34,8 @@ import java.util.function.Predicate;
 import static com.gregtechceu.gtceu.api.GTValues.*;
 
 public final class GTOUtils {
+
+    private GTOUtils() {}
 
     public static boolean isGeneration(TagPrefix tagPrefix, Material material) {
         Predicate<Material> condition = tagPrefix.generationCondition();
@@ -154,5 +163,30 @@ public final class GTOUtils {
                 .filter(entry -> value.equals(entry.getValue()))
                 .map(Map.Entry::getKey)
                 .findFirst().orElse(null);
+    }
+
+    public static ItemStack loadItemStack(CompoundTag tag) {
+        Item item = ItemUtils.getItem(tag.getString("id"));
+        ItemStack stack = item.getDefaultInstance();
+        if (tag.contains("tag", Tag.TAG_COMPOUND)) {
+            stack.setTag(tag.getCompound("tag"));
+            if (stack.getTag() != null) {
+                stack.getItem().verifyTagAfterLoad(stack.getTag());
+            }
+        }
+
+        if (stack.getItem().canBeDepleted()) {
+            stack.setDamageValue(stack.getDamageValue());
+        }
+        return stack;
+    }
+
+    public static FluidStack loadFluidStack(CompoundTag tag) {
+        Fluid fluid = FluidUtils.getFluid(tag.getString("FluidName"));
+        FluidStack stack = new FluidStack(fluid, 1);
+        if (tag.contains("Tag", Tag.TAG_COMPOUND)) {
+            stack.setTag(tag.getCompound("Tag"));
+        }
+        return stack;
     }
 }

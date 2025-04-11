@@ -23,9 +23,7 @@ public final class MultiStepItemHelper {
 
     public static ItemStack locateStep(ItemStack stack0, int step) {
         ItemStack stack = stack0.copy();
-        if (stack.getTag() != null) {
-            stack.getTag().putInt("current_craft_step", step);
-        }
+        stack.getTag().putInt("current_craft_step", step);
         return stack;
     }
 

@@ -8,9 +8,8 @@ import com.gregtechceu.gtceu.api.fluids.attribute.FluidAttributes;
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys;
 
 import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlags.DISABLE_DECOMPOSITION;
-import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet.*;
 import static com.gregtechceu.gtceu.common.data.GTMaterials.*;
-import static com.gto.gtocore.api.data.chemical.material.info.GTOMaterialIconSet.LIMPID;
+import static com.gto.gtocore.api.data.chemical.material.info.GTOMaterialIconSet.*;
 import static com.gto.gtocore.common.data.GTOMaterials.*;
 import static com.gto.gtocore.utils.register.MaterialsRegisterUtils.material;
 
@@ -3433,6 +3432,13 @@ public interface MaterialB {
                 .flags(DISABLE_DECOMPOSITION)
                 .buildAndRegister();
 
+        SilverNitrateSolution = material("silver_nitrate_solution", "硝酸银溶液")
+                .fluid()
+                .components(SilverNitrate, 1, Water, 1)
+                .color(0xfffce0).iconSet(DULL)
+                .flags(DISABLE_DECOMPOSITION)
+                .buildAndRegister();
+
         TrifluoroaceticPhosphateEster = material("trifluoroacetic_phosphate_ester", "三氟乙酸对磷脂")
                 .dust()
                 .components(Carbon, 8, Hydrogen, 5, Fluorine, 3, Oxygen, 2, Sulfur, 1)
@@ -4705,6 +4711,14 @@ public interface MaterialB {
                 .iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
                 .buildAndRegister().setFormula("SiF4·(HF)n");
+
+        Tetrafluorosilane = material("tetrafluorosilane", "四氟硅烷")
+                .gas()
+                .color(0xf6f7fb)
+                .components(Silicon, 1, Fluorine, 4)
+                .iconSet(DULL)
+                .flags(DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("SiF4");
 
         HighPuritySilica = material("high_purity_silica", "高纯度二氧化硅")
                 .dust()

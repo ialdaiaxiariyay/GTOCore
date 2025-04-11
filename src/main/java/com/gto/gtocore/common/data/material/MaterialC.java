@@ -1,16 +1,45 @@
 package com.gto.gtocore.common.data.material;
 
+import com.gto.gtocore.api.data.chemical.material.info.GTOMaterialFlags;
+
 import com.gregtechceu.gtceu.api.fluids.FluidBuilder;
 
 import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlags.DISABLE_DECOMPOSITION;
+import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlags.GENERATE_FOIL;
 import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet.*;
 import static com.gregtechceu.gtceu.common.data.GTMaterials.*;
+import static com.gto.gtocore.api.data.chemical.material.info.GTOMaterialIconSet.LIMPID;
 import static com.gto.gtocore.common.data.GTOMaterials.*;
 import static com.gto.gtocore.utils.register.MaterialsRegisterUtils.material;
 
 public interface MaterialC {
 
     static void init() {
+        Ethylenedioxythiophene = material("ethylenedioxythiophene", "EDOT", "乙撑二氧噻吩")
+                .fluid()
+                .color(0x57acad)
+                .iconSet(LIMPID)
+                .buildAndRegister().setFormula("C₂H₄O₂C₄H₂S(C₆H₆O₂S)", false);
+
+        Dietoxythiophene = material("dietoxythiophene", "Dietoxythiophene", "二乙氧基噻吩")
+                .fluid()
+                .color(0x67ff6a)
+                .iconSet(LIMPID)
+                .buildAndRegister().setFormula("C₄H₂(OC₂H₅)₂S", false);
+
+        Perbromothiophene = material("perbromothiophene", "Perbromothiophene", "二溴噻吩")
+                .fluid()
+                .color(0x87B657)
+                .iconSet(LIMPID)
+                .buildAndRegister().setFormula("C₄Br₄S", false);
+
+        IronSulfate = material("iron_sulfate", "硫酸亚铁")
+                .dust()
+                .color(0x8EB64F)
+                .flags(GTOMaterialFlags.GENERATE_CATALYST)
+                .iconSet(DULL)
+                .buildAndRegister().setFormula("FeSO4");
+
         LiquidHydrogen = material("liquid_hydrogen", "液态氢")
                 .liquid(new FluidBuilder().temperature(20))
                 .color(0x4fc4a2)
@@ -370,5 +399,126 @@ public interface MaterialC {
                 .iconSet(DULL)
                 // 后面画.iconSet(new MaterialIconSet("cascade_mfpc"))
                 .buildAndRegister();
+
+        RecycleBasicMFPC = material("recycle_basic_mfpc", "回收的多功能相变(MFPC)")
+                .dust()
+                .color(0xC0C0C0)
+                .iconSet(DULL)
+                .buildAndRegister();
+
+        HollowCeramicMicrosphereRoughEmbryo = material("hollow_ceramic_microsphere_rough_embryo", "中空陶瓷微珠粗胚")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        HollowCeramicMicrospheres = material("hollow_ceramic_microspheres", "中空陶瓷微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        SilverCoatedHollowCeramicMicrospheres = material("silver_coated_hollow_ceramic_microspheres", "镀银的中空陶瓷微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        SilverCoatedOctaneCeramicBeads = material("silver_coated_octane_ceramic_beads", "镀银的辛烷陶瓷微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        SealedPhaseChangeBeads = material("sealed_phase_change_beads", "密封相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        CarbonNanotubeCoatedPhaseChangeMicrobeads = material("carbon_nanotube_coated_phase_change_microbeads", "碳纳米管包覆的相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        MicrowaveAttenuatingCoatedPhaseChangeMicrobeads = material("microwave_attenuating_coated_phase_change_microbeads", "微波衰减涂覆的相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        SurfaceFunctionalizedPhaseChangeMicrobeads = material("surface_functionalized_phase_change_microbeads", "表面功能化的相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        RecycledPhaseChangeMicrobeads = material("recycled_phase_change_microbeads", "回收的相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        OctaneLoadedPhaseChangeMicrobeads = material("octane_loaded_phase_change_microbeads", "重载辛烷的相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        ReactivatedPhaseChangeMicrobeads = material("reactivated_phase_change_microbeads", "重新活化的相变微珠")
+                .dust()
+                .color(0x2b2d30)
+                .iconSet(SAND)
+                .buildAndRegister();
+
+        EthylSilicate = material("ethyl_silicate", "硅酸乙酯(TEOS)")
+                .fluid()
+                .color(0xfcffc1)
+                .iconSet(FLUID)
+                .buildAndRegister().setFormula("(C₂H₅O)₄Si", false);
+
+        SilicicAcid = material("silicic_acid", "硅酸")
+                .fluid()
+                .color(0xd3d2d5)
+                .iconSet(DULL)
+                .buildAndRegister().setFormula("Si(OH)₄", false);
+
+        Polystyrene = material("polystyrene", "聚苯乙烯")
+                .polymer(1)
+                .liquid(new FluidBuilder().temperature(240))
+                .flags(GENERATE_FOIL)
+                .color(0xc6c6c6)
+                .buildAndRegister().setFormula("(C₈H₈)n", false);
+
+        Trimethylsilanol = material("trimethylsilanol", "三甲基硅醇")
+                .fluid()
+                .iconSet(DULL)
+                .color(0x622998)
+                .buildAndRegister().setFormula("(CH₃)₃SiOH", false);
+
+        Hexamethyldisiloxane = material("hexamethyldisiloxane", "六甲基二硅氧烷")
+                .fluid()
+                .iconSet(DULL)
+                .color(0xffffff)
+                .buildAndRegister().setFormula("(CH₃)₆OSi₂", false);
+
+        Triethoxysilane = material("triethoxysilane", "三乙氧基氢硅烷")
+                .fluid()
+                .iconSet(DULL)
+                .color(0xbcbec4)
+                .buildAndRegister().setFormula("(CH₅O)₃SiH", false);
+
+        Chloropropyltriethoxysilane = material("chloropropyltriethoxysilane", "氯丙基三乙氧基硅烷")
+                .fluid()
+                .iconSet(DULL)
+                .color(0xb8bb90)
+                .buildAndRegister().setFormula("(CH₅O)₃(C₃H₆Cl)Si", false);
+
+        KH550SilaneCouplingAgent = material("kh550_silane_coupling_agent", "KH-550硅烷偶联剂")
+                .fluid()
+                .iconSet(DULL)
+                .color(0xf5f5f5)
+                .buildAndRegister().setFormula("(CH₅O)₃(C₃H₆NH₂)Si", false);
     }
 }
