@@ -4,6 +4,7 @@ import com.gto.gtocore.common.data.GTORecipeTypes;
 import com.gto.gtocore.utils.register.RecipeTypeRegisterUtils;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.recipe.*;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.data.GCYMRecipeTypes;
@@ -11,6 +12,7 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.fml.ModLoader;
 
 import com.hepdd.gtmthings.data.GTMTRecipeTypes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,6 +38,7 @@ public final class GTRecipeTypesMixin {
         GCYMRecipeTypes.init();
         GTORecipeTypes.init();
         GTMTRecipeTypes.init();
+        ModLoader.get().postEvent(new GTCEuAPI.RegisterEvent<>(GTRegistries.RECIPE_TYPES, GTRecipeType.class));
         GTRegistries.RECIPE_TYPES.freeze();
         GTRegistries.register(BuiltInRegistries.RECIPE_SERIALIZER, GTCEu.id("crafting_facade_cover"),
                 FacadeCoverRecipe.SERIALIZER);
