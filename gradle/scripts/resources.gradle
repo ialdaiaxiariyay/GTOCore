@@ -15,5 +15,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 sourceSets.main.resources.srcDir generateModMetadata
 legacyForge.ideSyncTask generateModMetadata
