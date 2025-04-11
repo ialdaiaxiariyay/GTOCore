@@ -133,48 +133,50 @@ public interface Data {
         GTOCore.LOGGER.info("Data loading took {}ms", System.currentTimeMillis() - time);
     }
 
-    class PreInitialization implements Runnable {
+    static void asyncInit() {
+        init();
+        IMultiblockMachineDefinition.init(); // 新增：添加多区块机器初始化
+        GTORecipeBuilder.RECIPE_MAP.values().forEach(recipe -> recipe.recipeCategory.addRecipe(recipe));
 
-        @Override
-        public void run() {
-            init();
-            IMultiblockMachineDefinition.init();
-            // 始终初始化 EMI_RECIPES，避免 null
-            ImmutableSet.Builder<EmiRecipe> recipes = ImmutableSet.builder();
-            if (GTCEu.Mods.isEMILoaded()) {
-                long time = System.currentTimeMillis();
-                EmiConfig.logUntranslatedTags = false;
-                EmiConfig.workstationLocation = SidebarSide.LEFT;
-                EmiRepairItemRecipe.TOOLS.clear();
-                GTORecipeBuilder.RECIPE_MAP.values().forEach(recipe -> recipe.recipeCategory.addRecipe(recipe));
-                EMI_RECIPE_WIDGETS = new Object2ObjectOpenHashMap<>();
-                // 构建 EMI 配方
-                for (GTRecipeCategory category : GTRegistries.RECIPE_CATEGORIES) {
-                    if (!category.shouldRegisterDisplays()) continue;
-                    var type = category.getRecipeType();
-                    if (category == type.getCategory()) type.buildRepresentativeRecipes();
-                    EmiRecipeCategory emiCategory = GTRecipeEMICategory.CATEGORIES.apply(category);
-                    type.getRecipesInCategory(category).stream()
-                            .map(recipe -> new GTEMIRecipe(recipe, emiCategory))
-                            .forEach(recipes::add);
-                }
-                // 添加多区块机器信息
-                for (MachineDefinition machine : GTRegistries.MACHINES.values()) {
-                    if (machine instanceof MultiblockMachineDefinition definition && definition.isRenderXEIPreview()) {
-                        recipes.add(new MultiblockInfoEmiRecipe(definition));
-                    }
-                }
+        // 始终初始化 EMI_RECIPES 构建器
+        ImmutableSet.Builder<EmiRecipe> recipes = ImmutableSet.builder();
 
-                GTOCore.LOGGER.info("Pre initialization EMI GTRecipe took {}ms", System.currentTimeMillis() - time);
+        if (GTCEu.Mods.isEMILoaded()) {
+            long time = System.currentTimeMillis();
+            EmiConfig.logUntranslatedTags = false;
+            EmiConfig.workstationLocation = SidebarSide.LEFT;
+            EmiRepairItemRecipe.TOOLS.clear();
+            EMI_RECIPE_WIDGETS = new Object2ObjectOpenHashMap<>();
+
+            // 构建 EMI 配方
+            for (GTRecipeCategory category : GTRegistries.RECIPE_CATEGORIES) {
+                if (!category.shouldRegisterDisplays()) continue;
+                var type = category.getRecipeType();
+                if (category == type.getCategory()) {
+                    type.buildRepresentativeRecipes();
+                }
+                EmiRecipeCategory emiCategory = GTRecipeEMICategory.CATEGORIES.apply(category);
+                type.getRecipesInCategory(category).stream()
+                        .map(recipe -> new GTEMIRecipe(recipe, emiCategory))
+                        .forEach(recipes::add);
             }
-            // 无论 EMI 是否加载，确保 EMI_RECIPES 被赋值
-            EMI_RECIPES = recipes.build();
-            EMI_RECIPE_WIDGETS = null;
-            clearCategoryMap();
+
+            // 添加多区块机器信息
+            for (MachineDefinition machine : GTRegistries.MACHINES.values()) {
+                if (machine instanceof MultiblockMachineDefinition definition && definition.isRenderXEIPreview()) {
+                    recipes.add(new MultiblockInfoEmiRecipe(definition));
+                }
+            }
+
+            EMI_RECIPE_WIDGETS = null; // 清理临时变量
+            GTOCore.LOGGER.info("Pre initialization EMI GTRecipe took {}ms", System.currentTimeMillis() - time);
         }
 
-        private void clearCategoryMap() {
-            if (GTOConfig.INSTANCE.recipeCheck) return;
+        // 无论 EMI 是否加载，确保赋值非空集合
+        EMI_RECIPES = recipes.build();
+
+        // 新增分类映射清理逻辑（原 clearCategoryMap 方法内联）
+        if (!GTOConfig.INSTANCE.recipeCheck) {
             for (GTRecipeType type : GTRegistries.RECIPE_TYPES) {
                 if (type == GTORecipeTypes.FURNACE_RECIPES) {
                     type.getCategoryMap().putIfAbsent(GTRecipeTypes.FURNACE_RECIPES.getCategory(), Set.of());
