@@ -10,13 +10,9 @@ import com.gto.gtocore.client.renderer.machine.WindMillTurbineRenderer;
 import com.gto.gtocore.common.machine.electric.ElectricHeaterMachine;
 import com.gto.gtocore.common.machine.electric.VacuumPumpMachine;
 import com.gto.gtocore.common.machine.generator.LightningRodMachine;
-import com.gto.gtocore.common.machine.generator.MagicEnergyMachine;
 import com.gto.gtocore.common.machine.generator.WindMillTurbineMachine;
 import com.gto.gtocore.common.machine.multiblock.part.*;
-import com.gto.gtocore.common.machine.multiblock.part.ae.MECatalystPatternBufferPartMachine;
-import com.gto.gtocore.common.machine.multiblock.part.ae.MEDualHatchStockPartMachine;
-import com.gto.gtocore.common.machine.multiblock.part.ae.MEProgrammablePatternBufferPartMachine;
-import com.gto.gtocore.common.machine.multiblock.part.ae.METagFilterStockBusPartMachine;
+import com.gto.gtocore.common.machine.multiblock.part.ae.*;
 import com.gto.gtocore.common.machine.multiblock.part.maintenance.*;
 import com.gto.gtocore.common.machine.noenergy.BoilWaterMachine;
 import com.gto.gtocore.common.machine.noenergy.HeaterMachine;
@@ -139,23 +135,6 @@ public interface GTOMachines {
                             FormattingUtil.formatNumbers(48828 * (1L << (2 * tier)))))
                     .register(),
             EV, IV, LuV);
-
-    MachineDefinition[] PRIMITIVE_MAGIC_ENERGY = registerTieredMachines(
-            "primitive_magic_energy", tier -> "%s原始魔法能源吸收器 %s".formatted(GTOValues.VLVHCN[tier], VLVT[tier]),
-            MagicEnergyMachine::new,
-            (tier, builder) -> builder
-                    .langValue("%s Primitive Magic Energy %s".formatted(VLVH[tier], VLVT[tier]))
-                    .nonYAxisRotation()
-                    .renderer(() -> new SimpleGeneratorMachineRenderer(tier,
-                            GTOCore.id("block/generators/primitive_magic_energy")))
-                    .tooltips(Component.translatable("gtocore.machine.primitive_magic_energy.tooltip.0"))
-                    .tooltips(Component.translatable("gtceu.universal.tooltip.amperage_out", 16))
-                    .tooltips(Component.translatable("gtceu.universal.tooltip.voltage_out",
-                            FormattingUtil.formatNumbers(V[tier]), VNF[tier]))
-                    .tooltips(Component.translatable("gtceu.universal.tooltip.energy_storage_capacity",
-                            FormattingUtil.formatNumbers(V[tier] << 9)))
-                    .register(),
-            ULV, LV);
 
     MachineDefinition[] WIND_MILL_TURBINE = registerTieredMachines(
             "wind_mill_turbine", tier -> "%s风力发电机 %s".formatted(GTOValues.VLVHCN[tier], VLVT[tier]),
@@ -639,6 +618,14 @@ public interface GTOMachines {
                     Component.translatable("gtocore.machine.me_dual_hatch_stock.tooltip.1"),
                     Component.translatable("gtceu.machine.me.copy_paste.tooltip"),
                     Component.translatable("gtceu.universal.enabled"))
+            .register();
+
+    MachineDefinition ME_CRAFT_PATTERN_PART_MACHINE = machine("me_craft_pattern_part_machine", "合成样板仓", MECraftPatternPartMachine::new)
+            .langValue("ME Craft Pattern Hatch")
+            .tier(UV)
+            .allRotation()
+            .abilities(PartAbility.IMPORT_ITEMS, PartAbility.IMPORT_FLUIDS)
+            .renderer(() -> new OverlayTieredMachineRenderer(UV, GTCEu.id("block/machine/part/me_pattern_buffer")))
             .register();
 
     MachineDefinition ME_PATTERN_BUFFER = machine("me_catalyst_pattern_buffer", "ME催化剂样板总成", MECatalystPatternBufferPartMachine::new)

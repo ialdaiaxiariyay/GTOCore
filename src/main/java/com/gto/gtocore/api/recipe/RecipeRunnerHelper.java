@@ -1,18 +1,26 @@
 package com.gto.gtocore.api.recipe;
 
+import com.gto.gtocore.GTOCore;
 import com.gto.gtocore.api.machine.feature.IRecipeSearchMachine;
 import com.gto.gtocore.api.machine.feature.multiblock.IMEOutputMachine;
+import com.gto.gtocore.common.data.GTORecipeTypes;
+import com.gto.gtocore.config.GTOConfig;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeHandler;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.machine.SimpleTieredMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 
+import net.minecraft.nbt.CompoundTag;
+
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -23,6 +31,20 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public interface RecipeRunnerHelper {
+
+    GTRecipe EMPTY_RECIPE = new GTRecipe(GTORecipeTypes.DUMMY_RECIPES, GTOCore.id("empty"), Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), List.of(), List.of(), new CompoundTag(), 0, GTORecipeTypes.DUMMY_RECIPES.getCategory());
+
+    static boolean checkTier(IRecipeLogicMachine machine, GTRecipe recipe) {
+        int tier = RecipeHelper.getRecipeEUtTier(recipe);
+        if (tier > 0) {
+            if (machine instanceof WorkableElectricMultiblockMachine electricMultiblockMachine) {
+                return tier <= electricMultiblockMachine.getOverclockTier();
+            } else if (machine instanceof SimpleTieredMachine tieredMachine) {
+                return tier <= tieredMachine.getOverclockTier();
+            }
+        }
+        return true;
+    }
 
     static boolean check(IRecipeLogicMachine machine, @Nullable GTRecipe recipe) {
         if (recipe == null || !checkConditions(machine, recipe) || !matchTickRecipe(machine, recipe)) return false;
@@ -99,6 +121,18 @@ public interface RecipeRunnerHelper {
      * @return 是否失败
      */
     static boolean handleTickRecipe(IRecipeCapabilityHolder holder, IO io, @Nullable GTRecipe recipe, @Nullable List<Content> contents, RecipeCapability<?> capability) {
+        if (io == IO.OUT) {
+            if (GTOConfig.getDifficulty() == 1) {
+                if (!handleTickRecipe(holder, io, recipe, contents, capability, true)) {
+                    handleTickRecipe(holder, io, recipe, contents, capability, false);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            handleTickRecipe(holder, io, recipe, contents, capability, false);
+            return false;
+        }
         return handleTickRecipe(holder, io, recipe, contents, capability, false);
     }
 
@@ -106,11 +140,25 @@ public interface RecipeRunnerHelper {
         if (contents == null || contents.isEmpty()) return false;
         List<IRecipeHandler<?>> handlers = holder.getCapabilitiesFlat(io, capability);
         if (handlers.isEmpty()) return true;
-        List<?> contentList = contents.stream().map(Content::getContent).toList();
+        List contentList = new ObjectArrayList<>(contents.size());
+        for (Content content : contents) {
+            contentList.add(content.getContent());
+        }
         for (IRecipeHandler<?> handler : handlers) {
-            contentList = handler.handleRecipeInner(io, recipe, (List) contentList, simulate);
+            contentList = handler.handleRecipeInner(io, recipe, contentList, simulate);
             if (contentList == null || contentList.isEmpty()) return false;
         }
-        return !contentList.isEmpty();
+        return true;
+    }
+
+    static boolean handleRecipe(IRecipeCapabilityHolder holder, IO io, @Nullable List<?> contents, RecipeCapability<?> capability, boolean simulate) {
+        if (contents == null || contents.isEmpty()) return true;
+        List<IRecipeHandler<?>> handlers = holder.getCapabilitiesFlat(io, capability);
+        if (handlers.isEmpty()) return false;
+        for (IRecipeHandler<?> handler : handlers) {
+            contents = handler.handleRecipe(io, EMPTY_RECIPE, contents, simulate);
+            if (contents == null || contents.isEmpty()) return true;
+        }
+        return false;
     }
 }

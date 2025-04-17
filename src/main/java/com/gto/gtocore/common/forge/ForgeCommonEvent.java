@@ -6,7 +6,7 @@ import com.gto.gtocore.api.machine.feature.IVacuumMachine;
 import com.gto.gtocore.api.playerskill.data.ExperienceSystemManager;
 import com.gto.gtocore.api.recipe.AsyncRecipeOutputTask;
 import com.gto.gtocore.api.recipe.AsyncRecipeSearchTask;
-import com.gto.gtocore.common.CommonCache;
+import com.gto.gtocore.common.ServerCache;
 import com.gto.gtocore.common.data.GTOBlocks;
 import com.gto.gtocore.common.data.GTOCommands;
 import com.gto.gtocore.common.data.GTOItems;
@@ -98,12 +98,12 @@ public final class ForgeCommonEvent {
         }
 
         if (item == GTItems.GRAVI_STAR.get() && level.getBlockState(pos).getBlock() == GTOBlocks.LEPTONIC_CHARGE.get()) {
-            SphereExplosion.explosion(pos, level, 200, true, true);
+            SphereExplosion.explosion(pos, level, 800, true, true);
             return;
         }
 
         if (item == GTOItems.UNSTABLE_STAR.get() && level.getBlockState(pos).getBlock() == GTOBlocks.QUANTUM_CHROMODYNAMIC_CHARGE.get()) {
-            SphereExplosion.explosion(pos, level, 200, true, true);
+            SphereExplosion.explosion(pos, level, 2000, true, true);
             return;
         }
 
@@ -209,7 +209,9 @@ public final class ForgeCommonEvent {
         if (event.getEntity() instanceof ServerPlayer player) {
             if (!GTOConfig.INSTANCE.dev) player.displayClientMessage(Component.translatable("gtocore.dev", Component.literal("GitHub").withStyle(Style.EMPTY.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/GregTech-Odyssey/GregTech-Odyssey/issues")))), false);
             if (player instanceof IEnhancedPlayer enhancedPlayer) {
-                ServerMessage.sendData(player.getServer(), player, "loggedIn", null);
+                final var data = new CompoundTag();
+                data.putUUID(ServerUtils.IDENTIFIER_KEY, ServerUtils.getServerIdentifier());
+                ServerMessage.sendData(player.getServer(), player, "loggedIn", data);
                 enhancedPlayer.gtocore$setDrift(enhancedPlayer.gTOCore$isDisableDrift());
             }
         }
@@ -217,7 +219,7 @@ public final class ForgeCommonEvent {
 
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ServerLevel level && !CommonCache.initialized) {
+        if (event.getLevel() instanceof ServerLevel level && !ServerCache.initialized) {
             ServerLevel serverLevel = level.getServer().getLevel(Level.OVERWORLD);
             if (serverLevel == null) return;
             InfinityCellSavaedData.INSTANCE = serverLevel.getDataStorage().computeIfAbsent(InfinityCellSavaedData::readNbt, InfinityCellSavaedData::new, "infinite_storage_cell_data");
@@ -225,9 +227,13 @@ public final class ForgeCommonEvent {
             WirelessEnergySavaedData.INSTANCE = serverLevel.getDataStorage().computeIfAbsent(ExtendWirelessEnergySavaedData::new, ExtendWirelessEnergySavaedData::new, "wireless_energy_data");
             CommonSavaedData.INSTANCE = serverLevel.getDataStorage().computeIfAbsent(CommonSavaedData::new, CommonSavaedData::new, "common_data");
             RecipeRunLimitSavaedData.INSTANCE = serverLevel.getDataStorage().computeIfAbsent(RecipeRunLimitSavaedData::new, RecipeRunLimitSavaedData::new, " recipe_run_limit_data");
+            WirelessManaSavaedData.INSTANCE = level.getDataStorage().computeIfAbsent(WirelessManaSavaedData::new, WirelessManaSavaedData::new, "wireless_mana_data");
             ExperienceSystemManager.INSTANCE = level.getDataStorage().computeIfAbsent(ExperienceSystemManager::load, ExperienceSystemManager::new, "gto_experience_data");
-            if (GTOConfig.INSTANCE.selfRestraint) ServerUtils.getPersistentData().putBoolean("srm", true);
-            CommonCache.initialized = true;
+            if (GTOConfig.INSTANCE.selfRestraint && !ServerUtils.getPersistentData().getBoolean("srm")) {
+                ServerUtils.getPersistentData().putBoolean("srm", true);
+                CommonSavaedData.INSTANCE.setDirty();
+            }
+            ServerCache.initialized = true;
         }
     }
 
@@ -242,7 +248,7 @@ public final class ForgeCommonEvent {
     public static void onServerStoppingEvent(ServerStoppingEvent event) {
         AsyncRecipeSearchTask.releaseExecutorService();
         AsyncRecipeOutputTask.releaseExecutorService();
-        CommonCache.initialized = false;
+        ServerCache.initialized = false;
     }
 
     @SubscribeEvent

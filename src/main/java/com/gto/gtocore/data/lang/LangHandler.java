@@ -115,6 +115,7 @@ public final class LangHandler {
         addENCN("config.gtocore.option.recipeCheck", "[Debug]Recipe Abnormal Check", "[调试]配方异常检查");
         addENCN("config.gtocore.option.dev", "Dev mode", "开发模式");
         addENCN("config.gtocore.option.gameDifficulty", "Game difficulty", "游戏难度");
+        addENCN("config.gtocore.option.emiGlobalFavorites", "EMI Global Favorites", "全局 EMI 书签");
 
         addENCN("gtceu.jei.ore_vein.bauxite_vein", "Bauxite Vein", "铝土矿脉");
         addENCN("gtceu.jei.ore_vein.chromite_vein", "Chromite Vein", "铬铁矿脉");
@@ -147,7 +148,8 @@ public final class LangHandler {
         addENCN("gtocore.recipe.restricted_machine", "Only runnable on: %s", "只能运行在：%s");
         addENCN("gtocore.recipe.heat.temperature", "External heat source is required: %s K", "需要外部热源：%s K");
         addENCN("gtocore.recipe.runlimit.count", "Run Limit: %s times", "运行次数限制：%s");
-
+        addENCN("gtocore.recipe.mana_consumption", "Mana Consumption", "魔力消耗");
+        addENCN("gtocore.recipe.mana_production", "Mana Production", "魔力产出");
         addENCN("gtocore.condition.gravity", "Requires Strong Gravity Environment", "需要强重力环境");
         addENCN("gtocore.condition.zero_gravity", "Requires Zero Gravity Environment", "需要无重力环境");
 
