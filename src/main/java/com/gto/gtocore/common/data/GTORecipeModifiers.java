@@ -2,6 +2,7 @@ package com.gto.gtocore.common.data;
 
 import com.gto.gtocore.api.capability.recipe.ManaRecipeCapability;
 import com.gto.gtocore.api.machine.feature.IOverclockConfigMachine;
+import com.gto.gtocore.api.machine.feature.IUpgradeMachine;
 import com.gto.gtocore.api.machine.feature.multiblock.ICoilMachine;
 import com.gto.gtocore.api.machine.trait.IEnhancedRecipeLogic;
 import com.gto.gtocore.api.recipe.ContentBuilder;
@@ -157,6 +158,10 @@ public interface GTORecipeModifiers {
                 if (recipeTemp > temperature) return null;
                 long recipeVoltage = (long) (RecipeHelper.getInputEUt(recipe) * OverclockingLogic.getCoilEUtDiscount(recipeTemp, temperature));
                 int duration = recipe.duration;
+                if (machine instanceof IUpgradeMachine upgradeMachine) {
+                    recipeVoltage = (long) (recipeVoltage * upgradeMachine.gtocore$getEnergy());
+                    duration = (int) (duration * upgradeMachine.gtocore$getSpeed());
+                }
                 long maxVoltage = overclockMachine.getOverclockVoltage();
                 int amountPerfectOC = Math.max(0, (temperature - recipeTemp) / 900);
                 long overclockVoltage;
@@ -249,6 +254,10 @@ public interface GTORecipeModifiers {
 
     static GTRecipe overclocking(MetaMachine machine, @Nullable GTRecipe recipe, boolean perfect, boolean laserLoss, boolean generator, double reductionEUt, double reductionDuration) {
         if (machine instanceof IOverclockMachine overclockMachine) {
+            if (machine instanceof IUpgradeMachine upgradeMachine) {
+                reductionEUt = reductionEUt * upgradeMachine.gtocore$getEnergy();
+                reductionDuration = reductionDuration * upgradeMachine.gtocore$getSpeed();
+            }
             return overclocking(machine, recipe, (long) ((generator ? RecipeHelper.getOutputEUt(recipe) : RecipeHelper.getInputEUt(recipe)) * reductionEUt), overclockMachine.getOverclockVoltage(), perfect, laserLoss, generator, reductionDuration);
         }
         return recipe;

@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static com.gto.gtocore.api.GTOValues.*;
+import static net.minecraft.ChatFormatting.GOLD;
+import static net.minecraft.ChatFormatting.RESET;
 
 public final class LangHandler {
 
@@ -164,6 +166,7 @@ public final class LangHandler {
         addENCN("config.jade.plugin_gtocore.temperature_provider", "[GTOCore] Machine Temperature", "[GTOCore] 机器温度");
         addENCN("config.jade.plugin_gtocore.tick_time_provider", "[GTOCore] Tick Time", "[GTOCore] Tick时间");
         addENCN("config.jade.plugin_gtocore.wireless_interactor_provider", "[GTOCore] Wireless Interactive Machine Info", "[GTOCore] 无线交互机器信息");
+        addENCN("config.jade.plugin_gtocore.upgrade_module_provider", "[GTOCore] Upgrade Module Info", "[GTOCore] 升级模块信息");
 
         addENCN("fluid.gtocore.gelid_cryotheum", "Gelid Cryotheum", "极寒之凛冰");
 
@@ -209,6 +212,9 @@ public final class LangHandler {
         addENCN("gtocore.player_exp_status.open", "ExperienceSystemOpened", "经验系统已开启");
         addENCN("gtocore.player_exp_status.close", "ExperienceSystemClosed", "经验系统已关闭");
         addENCN("gtocore.player_exp_status.get_experience", "you got %s point of %s experience", "你获得了%s点%s经验");
+
+        addENCN("gtocore.behaviour.grass_harvest.description", GOLD + "Greatly" + RESET + " increase the probability of wheat seed dropping", GOLD + "极大" + RESET + "地提升小麦种子掉落概率");
+        addENCN("gtocore.behaviour.grass_harvest.description2", "Right click to harvest", "右键以收割");
     }
 
     public static void enInitialize(LanguageProvider provider) {
